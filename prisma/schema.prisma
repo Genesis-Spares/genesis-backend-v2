@@ -1,0 +1,97 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "../src/generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model User {
+    id        String   @id @default(uuid())
+    email     String   @unique
+    password  String   @map("password_hash")
+    firstname String   @map("first_name")
+    lastName  String   @map("last_name")
+    phone     String?
+    isActive  Boolean  @default(true) @map("is_active")
+    createAt  DateTime @default(now()) @map("created_at")
+    updateAt  DateTime @default(now()) @map("updated_at")
+
+    roles UserRole[]
+
+    @@map("users")
+}
+
+model Role {
+    id          String   @id @default(uuid())
+    name        String   @unique
+    description String?
+    createAt    DateTime @default(now()) @map("created_at")
+
+    users       UserRole[]
+    permissions RolePermission[]
+
+    @@map("roles")
+}
+
+model Permission {
+    id       String @id @default(uuid())
+    resource String
+    action   String
+
+    role RolePermission[]
+
+    @@map("permissions")
+}
+
+model UserRole {
+    userId String @map("user_id")
+    roleId String @map("role_id")
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+    @@id([userId, roleId])
+    @@map("user_roles")
+}
+
+model RolePermission {
+    roleId       String @map("role_id")
+    permissionId String @map("permission_id")
+
+    role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+    permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+    @@id([roleId, permissionId])
+    @@map("role_permissions")
+}
+
+model RefreshToken {
+    id        String   @id @default(uuid())
+    userId    String   @map("user_id")
+    tokenHash String   @map("token_hash")
+    expiresAt DateTime @map("expires_at")
+    revoked   Boolean  @default(false)
+    createAt  DateTime @default(now()) @map("created_at")
+
+    @@map("refresh_tokens")
+}
+
+model NotificationLog {
+    id         String   @id @default(cuid())
+    userId     String   @map("user_id")
+    type       String // EMAIL, SMS, PUSH
+    channel    String // WELCOME, PASSWORD_RESET, ORDER_CONFIRMATION, etc.
+    status     String // SENT, FAILED, PENDING, RETRY
+    metadata   Json     @default("{}")
+    error      String?
+    retryCount Int      @default(0) @map("retry_count")
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    @@index([userId])
+    @@index([status])
+    @@index([createdAt])
+    @@map("notification_logs")
+}
