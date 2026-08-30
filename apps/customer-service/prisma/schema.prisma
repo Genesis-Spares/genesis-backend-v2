@@ -1,0 +1,213 @@
+// apps/customer-service/prisma/schema.prisma
+generator client {
+    provider = "prisma-client-js"
+    output   = "../src/generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model Customer {
+    id     String @id @default(uuid())
+    userId String @unique @map("user_id") // Reference to auth User (no FK)
+
+    // Denormalized from Auth Service (synced via events)
+    email     String  @unique
+    firstName String  @map("first_name")
+    lastName  String  @map("last_name")
+    phone     String?
+
+    // Customer-specific data
+    avatar      String?
+    dateOfBirth DateTime? @map("date_of_birth")
+    gender      String? // MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY
+    language    String    @default("en")
+    timezone    String    @default("UTC")
+    currency    String    @default("USD")
+
+    // Preferences
+    preferences CustomerPreference?
+
+    // Loyalty
+    loyaltyPoints Int    @default(0) @map("loyalty_points")
+    loyaltyTier   String @default("BRONZE") @map("loyalty_tier") // BRONZE, SILVER, GOLD, PLATINUM
+
+    // Status
+    isActive    Boolean   @default(true) @map("is_active")
+    lastLoginAt DateTime? @map("last_login_at")
+    loginCount  Int       @default(0) @map("login_count")
+
+    // Relationships (within this service only)
+    addresses      Address[]
+    communications Communication[]
+    notes          CustomerNote[]
+    activities     CustomerActivity[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([userId])
+    @@index([email])
+    @@index([loyaltyTier])
+    @@map("customers")
+}
+
+model CustomerPreference {
+    id         String @id @default(uuid())
+    customerId String @unique @map("customer_id")
+
+    // Communication preferences
+    emailNotifications Boolean @default(true) @map("email_notifications")
+    smsNotifications   Boolean @default(false) @map("sms_notifications")
+    pushNotifications  Boolean @default(true) @map("push_notifications")
+    marketingEmails    Boolean @default(true) @map("marketing_emails")
+
+    // Privacy
+    dataSharingConsent Boolean @default(true) @map("data_sharing_consent")
+    cookieConsent      Boolean @default(true) @map("cookie_consent")
+
+    // Preferences
+    preferredCategories String[] @map("preferred_categories")
+    preferredBrands     String[] @map("preferred_brands")
+    productViewHistory  Json?    @map("product_view_history")
+    searchHistory       Json?    @map("search_history")
+
+    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("customer_preferences")
+}
+
+model Address {
+    id         String @id @default(uuid())
+    customerId String @map("customer_id")
+
+    label String // Home, Work, etc.
+    type  String @default("SHIPPING") // SHIPPING, BILLING, BOTH
+
+    line1      String
+    line2      String?
+    city       String
+    state      String?
+    postalCode String  @map("postal_code")
+    country    String
+    phone      String? // Phone specific to this address
+
+    isDefault Boolean @default(false) @map("is_default")
+    isActive  Boolean @default(true) @map("is_active")
+
+    latitude  Float?
+    longitude Float?
+
+    deliveryInstructions String? @map("delivery_instructions")
+
+    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([customerId, label])
+    @@index([customerId])
+    @@index([isDefault])
+    @@map("addresses")
+}
+
+model Communication {
+    id         String @id @default(uuid())
+    customerId String @map("customer_id")
+
+    type      String // EMAIL, SMS, PUSH, IN_APP, WHATSAPP
+    direction String // INBOUND, OUTBOUND
+    subject   String?
+    content   String
+    status    String // SENT, DELIVERED, READ, FAILED, BOUNCED
+    metadata  Json?
+
+    sentAt      DateTime? @map("sent_at")
+    deliveredAt DateTime? @map("delivered_at")
+    readAt      DateTime? @map("read_at")
+    failedAt    DateTime? @map("failed_at")
+    error       String?
+
+    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([customerId])
+    @@index([type])
+    @@index([status])
+    @@index([createdAt])
+    @@map("communications")
+}
+
+model CustomerNote {
+    id         String @id @default(uuid())
+    customerId String @map("customer_id")
+
+    content  String
+    type     String // GENERAL, SUPPORT, SALES, COMPLAINT, FEEDBACK
+    authorId String @map("author_id") // User ID from auth-service
+
+    isInternal Boolean @default(true) @map("is_internal")
+    isPinned   Boolean @default(false) @map("is_pinned")
+
+    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([customerId])
+    @@index([type])
+    @@map("customer_notes")
+}
+
+model CustomerActivity {
+    id         String @id @default(uuid())
+    customerId String @map("customer_id")
+
+    action     String // LOGIN, LOGOUT, VIEW_PRODUCT, ADD_TO_CART, PLACE_ORDER, etc.
+    resource   String? // Resource type (PRODUCT, ORDER, etc.)
+    resourceId String? @map("resource_id") // ID of the resource
+
+    metadata  Json?
+    ipAddress String? @map("ip_address")
+    userAgent String? @map("user_agent")
+
+    customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([customerId])
+    @@index([action])
+    @@index([createdAt])
+    @@map("customer_activities")
+}
+
+model CustomerSegment {
+    id          String  @id @default(uuid())
+    name        String  @unique
+    description String?
+    criteria    Json
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("customer_segments")
+}
+
+model CustomerSegmentAssignment {
+    id         String @id @default(uuid())
+    customerId String @map("customer_id")
+    segmentId  String @map("segment_id")
+
+    assignedAt DateTime @default(now()) @map("assigned_at")
+
+    @@unique([customerId, segmentId])
+    @@index([customerId])
+    @@index([segmentId])
+    @@map("customer_segment_assignments")
+}

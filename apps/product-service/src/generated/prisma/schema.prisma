@@ -1,0 +1,210 @@
+// apps/product-service/prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// CATALOG SERVICE TABLES
+// ============================================
+
+model Category {
+  id          String  @id @default(uuid())
+  name        String
+  slug        String  @unique
+  description String?
+  icon        String?
+  imageUrl    String? @map("image_url")
+  isActive    Boolean @default(true) @map("is_active")
+
+  metadata Json?
+
+  // Self-referencing for subcategories
+  parentId String?    @map("parent_id")
+  parent   Category?  @relation("CategoryParent", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryParent")
+
+  products Product[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([name, parentId]) // Prevent duplicate subcategory names
+  @@index([slug])
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Product {
+  id           String   @id @default(uuid())
+  sku          String   @unique
+  name         String
+  slug         String   @unique
+  description  String?
+  brand        String?
+  price        Decimal  @db.Decimal(10, 2)
+  comparePrice Decimal? @map("compare_price") @db.Decimal(10, 2)
+  costPrice    Decimal? @map("cost_price") @db.Decimal(10, 2)
+
+  // Inventory
+  stockQty    Int     @default(0) @map("stock_qty")
+  minStockQty Int?    @map("min_stock_qty")
+  isInStock   Boolean @default(true) @map("is_in_stock")
+  isActive    Boolean @default(true) @map("is_active")
+
+  // Relationships
+  categoryId String?   @map("category_id")
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  // Images and media
+  images     ProductImage[]
+  variants   ProductVariant[]
+  attributes ProductAttribute[]
+  reviews    ProductReview[]
+
+  // Metrics
+  weight     Decimal? @db.Decimal(10, 2)
+  dimensions Json? // { length, width, height, unit }
+
+  // SEO
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  metaKeywords    String[] @default([]) @map("meta_keywords")
+
+  // Compatibility
+  compatibility String? // Vehicle compatibility (JSON or text)
+  tags          String[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([sku])
+  @@index([slug])
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([price])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String  @id @default(uuid())
+  productId String  @map("product_id")
+  url       String
+  alt       String?
+  isPrimary Boolean @default(false) @map("is_primary")
+  order     Int     @default(0)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, order])
+  @@index([productId])
+  @@map("product_images")
+}
+
+model ProductVariant {
+  id           String   @id @default(uuid())
+  productId    String   @map("product_id")
+  sku          String   @unique
+  name         String
+  price        Decimal  @db.Decimal(10, 2)
+  comparePrice Decimal? @map("compare_price") @db.Decimal(10, 2)
+  stockQty     Int      @default(0) @map("stock_qty")
+  attributes   Json // { color: 'red', size: 'M', material: 'leather' }
+  weight       Decimal? @db.Decimal(10, 2)
+  images       String[] // URLs of variant-specific images
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([productId])
+  @@index([sku])
+  @@map("product_variants")
+}
+
+model ProductAttribute {
+  id           String @id @default(uuid())
+  productId    String @map("product_id")
+  name         String // e.g., "Color", "Size", "Material"
+  value        String // e.g., "Red", "Large", "Leather"
+  displayOrder Int    @default(0) @map("display_order")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, name, value])
+  @@index([productId])
+  @@map("product_attributes")
+}
+
+model ProductReview {
+  id         String   @id @default(uuid())
+  productId  String   @map("product_id")
+  userId     String   @map("user_id") // Foreign key to User (from auth service)
+  rating     Int // 1-5
+  title      String?
+  content    String?
+  isVerified Boolean  @default(false) @map("is_verified")
+  images     String[] // URLs of review images
+
+  // Store user snapshot at time of review
+  userName   String  @map("user_name")
+  userAvatar String? @map("user_avatar")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, userId]) // One review per user per product
+  @@index([productId])
+  @@index([userId])
+  @@index([rating])
+  @@map("product_reviews")
+}
+
+// ============================================
+// WISHLIST/FAVOURITES (moved from cart service)
+// ============================================
+
+model Wishlist {
+  id        String  @id @default(uuid())
+  userId    String  @map("user_id") // Foreign key to User
+  name      String  @default("Default") // Multiple wishlists support
+  isDefault Boolean @default(true) @map("is_default")
+
+  items WishlistItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("wishlists")
+}
+
+model WishlistItem {
+  id         String  @id @default(uuid())
+  wishlistId String  @map("wishlist_id")
+  productId  String  @map("product_id") // Foreign key to Product
+  variantId  String? @map("variant_id") // Optional variant
+  notes      String?
+
+  wishlist Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  // Note: productId is a UUID reference (no FK constraint in DB)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([wishlistId, productId, variantId])
+  @@index([wishlistId])
+  @@map("wishlist_items")
+}

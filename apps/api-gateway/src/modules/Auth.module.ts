@@ -29,7 +29,7 @@ import { PermissionsGuard } from '../common/guards/permissions.guard';
             useFactory: (config: ConfigService) => ({
                 secret: config.get<string>('JWT_SECRET'), // ✅ Same secret as Auth Service
                 signOptions: {
-                    expiresIn: (config.get<string>('JWT_EXPIRES_IN') || '15m') as `${number}${'s' | 'm' | 'h' | 'd'}`,
+                    expiresIn: (config.get<string>('JWT_EXPIRES_IN') || '1h') as `${number}${'s' | 'm' | 'h' | 'd'}`,
                 },
             }),
 

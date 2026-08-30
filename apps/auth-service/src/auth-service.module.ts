@@ -1,11 +1,12 @@
 // apps/auth-service/src/auth-service.module.ts
 import { Module } from '@nestjs/common';
 import { AuthServiceController } from './auth-service.controller';
-import { AuthService } from './auth-service.service';
+import { AuthService } from './services/auth-service.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from 'libs/prisma/prisma.service';
+import { PrismaService } from '../libs/prisma/prisma.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { OTPService } from './services/otp.service';
 
 @Module({
     imports: [
@@ -16,9 +17,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
-                secret: config.get<string>('JWT_SECRET'), // ✅ Use environment variable
+                secret: config.get<string>('JWT_SECRET'),
                 signOptions: {
-                    expiresIn: (config.get<string>('JWT_EXPIRES_IN') || '15m') as `${number}${'s' | 'm' | 'h' | 'd'}`,
+                    expiresIn: (config.get<string>('JWT_EXPIRES_IN') || '1d') as `${number}${'s' | 'm' | 'h' | 'd'}`,
                 },
             }),
         }),
@@ -35,9 +36,21 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
                 }),
                 inject: [ConfigService],
             },
+            {
+                name: 'CUSTOMER_SERVICE',
+                useFactory: (config: ConfigService) => ({
+                    transport: Transport.TCP,
+                    options: {
+                        host: config.get('CUSTOMER_SERVICE_HOST', 'localhost'),
+                        port: config.get('CUSTOMER_SERVICE_PORT', 11005),
+                    },
+                }),
+                inject: [ConfigService],
+            },
+
         ]),
     ],
     controllers: [AuthServiceController],
-    providers: [AuthService, PrismaService],
+    providers: [AuthService, PrismaService, OTPService],
 })
 export class AuthServiceModule { }

@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password        String   @map("password_hash")
+  firstname       String   @map("first_name")
+  lastName        String   @map("last_name")
+  phone           String?
+  isActive        Boolean  @default(false) @map("is_active")
+  isEmailVerified Boolean  @default(false) @map("is_email_verified")
+  createAt        DateTime @default(now()) @map("created_at")
+  updateAt        DateTime @default(now()) @map("updated_at")
+
+  resetToken        String?   @unique @map("reset_token")
+  resetTokenExpires DateTime? @map("reset_token_expires_at")
+
+  roles UserRole[]
+  opts  OTP[]
+
+  @@map("users")
+}
+
+model OTP {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  email     String // Store email for cases where user might not exist yet
+  code      String   @map("otp_code")
+  type      String // REGISTER, LOGIN, FORGOT_PASSWORD, CHANGE_EMAIL
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([email, type]) // One active OTP per email per type
+  @@index([userId])
+  @@index([email])
+  @@index([createdAt])
+  @@map("otps")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createAt    DateTime @default(now()) @map("created_at")
+
+  users       UserRole[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id       String @id @default(uuid())
+  resource String
+  action   String
+
+  role RolePermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+model UserRole {
+  userId String @map("user_id")
+  roleId String @map("role_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String @map("role_id")
+  permissionId String @map("permission_id")
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tokenHash String   @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  revoked   Boolean  @default(false)
+  createAt  DateTime @default(now()) @map("created_at")
+
+  @@map("refresh_tokens")
+}

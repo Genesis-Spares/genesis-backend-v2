@@ -12,7 +12,27 @@ async function bootstrap() {
         transform: true,
     }));
 
-    app.enableCors();
+    app.enableCors({
+        origin: [
+            'http://localhost:3000',
+            'http://192.168.100.164:3000'
+        ],
+        methods: [
+            'GET',
+            'POST',
+            'PUT',
+            'PATCH',
+            'DELETE',
+            'OPTIONS',
+        ],
+        allowedHeaders: [
+            'Content-Type',
+            'Authorization',
+            'Accept',
+        ],
+        credentials: true,
+    });
+
     app.useGlobalInterceptors(new SafeLoggingInterceptor());
     await app.listen(process.env.API_GATEWAY_PORT || 11000);
 }

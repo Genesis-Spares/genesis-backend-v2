@@ -4,6 +4,9 @@ export interface JwtPayload {
     email: string;
     roles: string[];
     permissions: string[];
+    emailVerified?: boolean;
+    iat: number;
+    exp: number;
 }
 
 export interface AuthTokens {
