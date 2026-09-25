@@ -1,99 +1,52 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Genesis backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS microservices behind one HTTP gateway:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+| Service | Transport | Port | Database |
+|---|---|---|---|
+| `api-gateway` | HTTP (`/api`) | 11000 | — |
+| `auth-service` | TCP | 11001 | `genesis_auth` |
+| `notification-service` | Redis events (+ HTTP 11003) | 11003 | `genesis_notification` |
+| `product-service` | TCP | 11004 | `genesis_catalog` |
+| `customer-service` | TCP | 11005 | `genesis_customer` |
+| `order-service` | TCP | 11006 | `genesis_order` |
 
-## Description
+Each service owns its own Postgres database and Prisma schema (`apps/<service>/prisma`). Redis carries events between services and caches products.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+## Run with Docker
 
 ```bash
-$ pnpm install
+cp .env.example .env          # set JWT_SECRET, SMTP, M-Pesa, SEED_* passwords
+docker compose up --build     # API: http://localhost:11000/api
 ```
 
-## Compile and run the project
+A one-shot `migrate` container applies every service's migrations and seeds roles, permissions and the default admin/staff accounts before the services start. It's idempotent, so it runs on every `up`.
+
+With [`genesis-frontend-shop`](https://github.com/Genesis-Spares/genesis-frontend-shop) and [`genesis-dashboard`](https://github.com/Genesis-Spares/genesis-dashboard) cloned next to this repo, `docker compose --profile frontends up --build` also serves the storefront on :3000 and the dashboard on :3001.
+
+## Run locally (without Docker)
+
+Needs Node 22, pnpm 10, Postgres 16 and Redis.
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
+cp .env.example .env          # defaults point at localhost
+for db in genesis_auth genesis_customer genesis_notification genesis_catalog genesis_order; do createdb "$db"; done
+pnpm db:migrate               # migrations for every service + seed
+pnpm build:all
+node dist/apps/<service>/main.js   # one per service, or `pnpm start:dev <service>`
 ```
 
-## Run tests
+Default logins (unless `SEED_*` is set): `admin@genesis.com` / `Admin123!@#`, `staff@genesis.com` / `Staff123!@#`. **Set `SEED_ADMIN_PASSWORD` and `SEED_STAFF_PASSWORD` before seeding any shared database.**
 
-```bash
-# unit tests
-$ pnpm run test
+After changing a `schema.prisma`: `cd apps/<service> && pnpm exec prisma migrate dev --name <change>` (also regenerates the committed client in `src/generated/prisma`).
 
-# e2e tests
-$ pnpm run test:e2e
+## Checkout, payments, delivery and VAT
 
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# genesis-backend
+- **M-Pesa (STK push).** Checkout creates the order as `PENDING` and sends the M-Pesa prompt to the shopper's phone. Safaricom calls `POST /api/payments/mpesa/callback/<MPESA_CALLBACK_SECRET>`, which marks the order paid and confirmed. The storefront polls `GET /api/me/orders/:id/payment` and can re-send the prompt with `POST /api/me/orders/:id/pay`. If a callback never arrives, the order service asks Daraja for the status. Orders still unpaid after `MPESA_PAYMENT_TIMEOUT_MINUTES` are cancelled and their stock released.
+  - Get sandbox keys at [developer.safaricom.co.ke](https://developer.safaricom.co.ke). The callback URL must be public HTTPS (use a tunnel such as ngrok locally).
+  - Without credentials, local (non-production) runs use **mock mode**: payments succeed after `MPESA_MOCK_DELAY_MS`, and phones ending in `0000` decline. With `NODE_ENV=production` (including Docker), M-Pesa checkout is refused until it's configured.
+  - Card payments are disabled until a card processor is integrated. Pay on delivery stays available in zones that allow it.
+- **Delivery zones.** A shopper's town picks the zone; towns no zone lists use the default zone. Each zone has a base fee, an optional per-kg surcharge above an included weight (from product weights), a free-delivery threshold, ETA and whether cash on delivery is allowed. Manage zones in the dashboard (**Settings → Delivery & VAT**) or via `/api/settings/delivery-zones`.
+- **VAT.** Default 16%, added on top of prices (and on delivery unless turned off), rounded to whole shillings. The rate is stored on each order. Configure it at `/api/settings/checkout`.
+- Public helpers for the cart page: `GET /api/checkout/delivery-zones` and `POST /api/checkout/quote` (`{ city, items: [{ productId, quantity }] }`).

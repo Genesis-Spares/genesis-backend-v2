@@ -15,12 +15,8 @@ import {
     ValidateNested,
 } from 'class-validator';
 
-export const DELIVERY_METHODS = {
-    'same-day': { label: 'Same-Day Delivery (Nairobi)', fee: 0 },
-    courier: { label: 'Countrywide Courier', fee: 450 },
-} as const;
-
-export const PAYMENT_METHODS = ['mpesa', 'card', 'cod'] as const;
+// cards are off until a card processor is integrated
+export const PAYMENT_METHODS = ['mpesa', 'cod'] as const;
 
 export class CheckoutItemDto {
     @IsUUID()
@@ -33,8 +29,9 @@ export class CheckoutItemDto {
 }
 
 /**
- * Shopper checkout body. Deliberately carries NO prices — the gateway
- * re-prices every item from the product service so the client can't
+ * Shopper checkout body. Deliberately carries NO prices or fees — the
+ * gateway re-prices every item from the product service and the order
+ * service prices delivery (from the town) and VAT, so the client can't
  * set its own totals.
  */
 export class CheckoutDto {
@@ -70,9 +67,6 @@ export class CheckoutDto {
     @MaxLength(120)
     landmark?: string;
 
-    @IsIn(Object.keys(DELIVERY_METHODS))
-    deliveryMethod: keyof typeof DELIVERY_METHODS;
-
     @IsIn(PAYMENT_METHODS)
     paymentMethod: (typeof PAYMENT_METHODS)[number];
 
@@ -80,4 +74,27 @@ export class CheckoutDto {
     @IsString()
     @MaxLength(500)
     note?: string;
+}
+
+/** Price a cart for a town before placing the order (public — also used for guests). */
+export class QuoteDto {
+    @IsArray()
+    @ArrayMinSize(1)
+    @ArrayMaxSize(50)
+    @ValidateNested({ each: true })
+    @Type(() => CheckoutItemDto)
+    items: CheckoutItemDto[];
+
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(80)
+    city: string;
+}
+
+/** Re-send the M-Pesa prompt, optionally to a different phone. */
+export class PayOrderDto {
+    @IsOptional()
+    @IsString()
+    @MaxLength(20)
+    phone?: string;
 }

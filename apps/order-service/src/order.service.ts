@@ -6,6 +6,7 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom, timeout } from 'rxjs';
 import { PrismaService } from '../libs/prisma/prisma.service';
 import { Prisma } from './generated/prisma';
+import { PricingService, type Quote } from './pricing.service';
 import {
     CreateOrderDto,
     UpdateOrderDto,
@@ -69,7 +70,13 @@ export class OrderService {
         @Inject('PRODUCT_SERVICE') private readonly productClient: ClientProxy,
         @Inject('NOTIFICATION_SERVICE') private readonly notificationClient: ClientProxy,
         private readonly config: ConfigService,
+        private readonly pricing: PricingService,
     ) { }
+
+    /** How long a shopper has to complete an M-Pesa payment before the order is cancelled. */
+    private get paymentWindowMs() {
+        return (Number(this.config.get('MPESA_PAYMENT_TIMEOUT_MINUTES', 30)) || 30) * 60_000;
+    }
 
     /**
      * Tell the customer about an order event (email, + SMS when configured).
@@ -80,7 +87,7 @@ export class OrderService {
         order: {
             id: string; orderNumber: string; customerId: string; customerEmail: string; customerName: string;
             customerPhone?: string | null; status: string; paymentStatus: string; paymentMethod?: string | null;
-            currency: string; subtotal: unknown; shippingAmount: unknown; discountAmount: unknown; total: unknown;
+            currency: string; subtotal: unknown; shippingAmount: unknown; discountAmount: unknown; taxAmount: unknown; total: unknown;
             shippingAddress: unknown; trackingCarrier?: string | null; trackingNumber?: string | null;
             estimatedDeliveryAt?: Date | null; cancelReason?: string | null;
             items?: { name: string; sku: string; quantity: number; unitPrice: unknown; subtotal: unknown }[];
@@ -104,6 +111,7 @@ export class OrderService {
                 subtotal: Number(order.subtotal),
                 shipping: Number(order.shippingAmount),
                 discount: Number(order.discountAmount),
+                tax: Number(order.taxAmount),
                 total: Number(order.total),
                 items: (order.items ?? []).map((i) => ({ name: i.name, sku: i.sku, quantity: i.quantity, unitPrice: Number(i.unitPrice), lineTotal: Number(i.subtotal) })),
                 address: address ? [address.line1, address.line2 && `near ${address.line2}`, address.city].filter(Boolean).join(', ') : null,
@@ -177,7 +185,11 @@ export class OrderService {
      */
     async createOrder(
         dto: CreateOrderDto,
-        initial?: { id?: string; status: string; paymentStatus: string; history: { status: string; note: string; actor?: string; type?: string }[] },
+        initial?: {
+            id?: string; status: string; paymentStatus: string;
+            taxRate?: number; deliveryZoneName?: string; paymentDueAt?: Date;
+            history: { status: string; note: string; actor?: string; type?: string }[];
+        },
     ) {
         try {
             const subtotal = dto.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
@@ -202,6 +214,9 @@ export class OrderService {
                     shippingAmount,
                     discountAmount,
                     total,
+                    taxRate: initial?.taxRate,
+                    deliveryZoneName: initial?.deliveryZoneName,
+                    paymentDueAt: initial?.paymentDueAt,
                     couponCode: dto.couponCode,
                     customerNote: dto.customerNote,
                     paymentMethod: dto.paymentMethod,
@@ -245,11 +260,22 @@ export class OrderService {
     }
 
     /**
-     * Shopper checkout. Payment is SIMULATED for now: M-Pesa / card orders are
-     * marked PAID immediately, cash-on-delivery stays PENDING until delivery.
-     * Swap this for a real gateway callback (e.g. M-Pesa STK) later.
+     * Shopper checkout. Delivery and VAT are priced here from the delivery
+     * zones and checkout settings — never taken from the client. M-Pesa orders
+     * wait in PENDING until the payment callback confirms them (see
+     * PaymentService); cash-on-delivery orders are confirmed straight away.
      */
     async placeOrder(dto: CreateOrderDto) {
+        if (!['mpesa', 'cod'].includes(dto.paymentMethod ?? '')) this.badRequest('Choose M-Pesa or pay on delivery.');
+        const quote = await this.pricing.quote({
+            city: dto.shippingAddress.city,
+            items: dto.items.map((i) => ({ unitPrice: i.unitPrice, quantity: i.quantity, weightKg: i.weightKg })),
+        });
+        if (dto.paymentMethod === 'cod' && !quote.zone.allowsCod) {
+            this.badRequest(`Pay on delivery isn't available for ${quote.zone.name}. Please pay with M-Pesa.`);
+        }
+        const priced: CreateOrderDto = { ...dto, shippingAmount: quote.shipping, taxAmount: quote.taxAmount };
+
         // Take stock first (all lines or none) under the id the order will get,
         // so a sold-out part fails checkout instead of creating an unfulfillable order.
         const orderId = randomUUID();
@@ -267,8 +293,9 @@ export class OrderService {
             throw new RpcException({ statusCode: 503, message: "We couldn't confirm stock right now. Please try again.", error: 'Service Unavailable' });
         }
         try {
-            const order = await this.placeOrderRecord(orderId, dto);
-            this.notifyCustomer('order.placed', order);
+            const order = await this.placeOrderRecord(orderId, priced, quote);
+            // M-Pesa orders are announced once the payment lands (confirmPayment)
+            if (dto.paymentMethod === 'cod') this.notifyCustomer('order.placed', order);
             return order;
         } catch (e) {
             await this.product('inventory.order.release', { orderId, reason: 'ORDER_FAILED' })
@@ -277,23 +304,82 @@ export class OrderService {
         }
     }
 
-    private async placeOrderRecord(orderId: string, dto: CreateOrderDto) {
-        const payOnDelivery = dto.paymentMethod === 'cod';
-        const method = { mpesa: 'M-Pesa', card: 'card', cod: 'cash on delivery' }[dto.paymentMethod ?? ''] ?? dto.paymentMethod;
+    private async placeOrderRecord(orderId: string, dto: CreateOrderDto, quote: Quote) {
+        const snapshot = { id: orderId, taxRate: quote.taxRate, deliveryZoneName: quote.zone.name };
+        if (dto.paymentMethod === 'mpesa') {
+            return this.createOrder(dto, {
+                ...snapshot,
+                status: 'PENDING',
+                paymentStatus: 'PENDING',
+                paymentDueAt: new Date(Date.now() + this.paymentWindowMs),
+                history: [{ status: 'PENDING', note: 'Order placed — waiting for M-Pesa payment', actor: 'customer' }],
+            });
+        }
         return this.createOrder(dto, {
-            id: orderId,
+            ...snapshot,
             status: 'CONFIRMED',
-            paymentStatus: payOnDelivery ? 'PENDING' : 'PAID',
+            paymentStatus: 'PENDING',
             history: [
                 { status: 'PENDING', note: 'Order placed', actor: 'customer' },
-                {
-                    status: 'CONFIRMED',
-                    actor: 'system',
-                    note: payOnDelivery
-                        ? 'Order confirmed — payment due on delivery'
-                        : `Payment received via ${method} (simulated)`,
-                },
+                { status: 'CONFIRMED', actor: 'system', note: 'Order confirmed — payment due on delivery' },
             ],
+        });
+    }
+
+    /**
+     * Money has landed for this order (M-Pesa callback or status query).
+     * Idempotent. A payment that arrives after the order was cancelled is
+     * recorded and flagged for staff instead of reviving the order, because
+     * its stock has already been released.
+     */
+    async confirmPayment(orderId: string, p: { receipt?: string | null; amountNote?: string | null }) {
+        const order = await this.findOrThrow(orderId);
+        if (order.paymentStatus === 'PAID') return order;
+        const receipt = p.receipt ? ` (receipt ${p.receipt})` : '';
+
+        if (order.status === 'PENDING') {
+            const events: TimelineEvent[] = [
+                { type: 'PAYMENT', status: 'CONFIRMED', note: `Payment received via M-Pesa${receipt}`, actor: 'system' },
+                { type: 'STATUS', status: 'CONFIRMED', note: DEFAULT_STATUS_NOTE.CONFIRMED, actor: 'system' },
+            ];
+            if (p.amountNote) events.push({ type: 'UPDATE', status: 'CONFIRMED', note: p.amountNote, isPublic: false, actor: 'system' });
+            const [updated] = await this.prisma.$transaction([
+                this.prisma.order.update({
+                    where: { id: orderId },
+                    data: { status: 'CONFIRMED', paymentStatus: 'PAID', paymentDueAt: null },
+                    include: { items: true },
+                }),
+                this.prisma.orderStatusHistory.createMany({ data: events.map((e, i) => this.timelineRow(orderId, e, i)) }),
+            ]);
+            this.notifyCustomer('order.placed', updated);
+            this.logger.log(`Order ${updated.orderNumber} paid via M-Pesa${receipt}`);
+            return updated;
+        }
+
+        const [updated] = await this.prisma.$transaction([
+            this.prisma.order.update({ where: { id: orderId }, data: { paymentStatus: 'PAID', paymentDueAt: null }, include: { items: true } }),
+            this.prisma.orderStatusHistory.create({
+                data: this.timelineRow(orderId, {
+                    type: 'PAYMENT',
+                    status: order.status,
+                    note: `M-Pesa payment received after the order was ${order.status.toLowerCase()}${receipt} — refund the customer or re-create the order`,
+                    isPublic: false,
+                    actor: 'system',
+                }),
+            }),
+        ]);
+        this.logger.warn(`Late M-Pesa payment on ${order.status} order ${order.orderNumber}`);
+        return updated;
+    }
+
+    /** Unpaid M-Pesa order past its deadline: cancel it, which returns its stock. */
+    async expireUnpaidOrder(orderId: string) {
+        const order = await this.findOrThrow(orderId);
+        if (order.status !== 'PENDING' || order.paymentStatus === 'PAID') return order;
+        return this.updateOrderStatus(orderId, {
+            status: 'CANCELLED',
+            note: "Cancelled — we didn't receive your M-Pesa payment in time",
+            actor: 'system',
         });
     }
 
@@ -379,6 +465,7 @@ export class OrderService {
             include: {
                 items: true,
                 statusHistory: { orderBy: { createdAt: 'desc' } },
+                payments: { orderBy: { createdAt: 'desc' } },
                 _count: { select: { notes: true } },
             },
         });

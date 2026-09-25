@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      AUTH_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/genesis_auth
+      CUSTOMER_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/genesis_customer
+      NOTIFICATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/genesis_notification
+      CATALOG_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/genesis_catalog
+      ORDER_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/genesis_order
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Build all services
+        run: pnpm build:all
+      - name: Create databases
+        run: |
+          for db in genesis_auth genesis_customer genesis_notification genesis_catalog genesis_order; do
+            PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE $db"
+          done
+      - name: Apply migrations and seed
+        run: pnpm db:migrate
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build --target runtime -t genesis-backend:ci .

@@ -1,0 +1,170 @@
+# Full Genesis backend: Postgres + Redis + migrations + the six services.
+#
+#   cp .env.example .env        # then fill in secrets
+#   docker compose up --build   # API on http://localhost:11000/api
+#
+# With genesis-frontend-shop and genesis-dashboard cloned next to this repo,
+# `docker compose --profile frontends up --build` also serves the storefront
+# on :3000 and the dashboard on :3001.
+
+x-backend: &backend
+  build:
+    context: .
+    target: runtime
+  image: genesis-backend:local
+  restart: unless-stopped
+  env_file: .env
+  depends_on:
+    migrate:
+      condition: service_completed_successfully
+    redis:
+      condition: service_healthy
+
+# Where each service is reachable inside the compose network. A service
+# binding its own port overrides its own *_HOST to 0.0.0.0 below.
+x-network-env: &network-env
+  NODE_ENV: production
+  AUTH_DATABASE_URL: postgresql://genesis:${POSTGRES_PASSWORD:-genesis}@postgres:5432/genesis_auth
+  CUSTOMER_DATABASE_URL: postgresql://genesis:${POSTGRES_PASSWORD:-genesis}@postgres:5432/genesis_customer
+  NOTIFICATION_DATABASE_URL: postgresql://genesis:${POSTGRES_PASSWORD:-genesis}@postgres:5432/genesis_notification
+  CATALOG_DATABASE_URL: postgresql://genesis:${POSTGRES_PASSWORD:-genesis}@postgres:5432/genesis_catalog
+  ORDER_DATABASE_URL: postgresql://genesis:${POSTGRES_PASSWORD:-genesis}@postgres:5432/genesis_order
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  AUTH_SERVICE_HOST: auth-service
+  AUTH_SERVICE_PORT: 11001
+  CUSTOMER_SERVICE_HOST: customer-service
+  CUSTOMER_SERVICE_PORT: 11005
+  PRODUCT_SERVICE_HOST: product-service
+  PRODUCT_SERVICE_PORT: 11004
+  PRODUCT_PORT: 11004
+  ORDER_SERVICE_HOST: order-service
+  ORDER_SERVICE_PORT: 11006
+  NOTIFICATION_PORT: 11003
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: genesis
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-genesis}
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U genesis -d genesis_order"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # one-shot: prisma migrate deploy for every service + seed roles/default users
+  migrate:
+    build:
+      context: .
+      target: build
+    image: genesis-backend-tools:local
+    env_file: .env
+    environment:
+      <<: *network-env
+    command: ["sh", "scripts/migrate.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  auth-service:
+    <<: *backend
+    command: ["node", "dist/apps/auth-service/main.js"]
+    environment:
+      <<: *network-env
+      AUTH_SERVICE_HOST: 0.0.0.0
+
+  customer-service:
+    <<: *backend
+    command: ["node", "dist/apps/customer-service/main.js"]
+    environment:
+      <<: *network-env
+
+  notification-service:
+    <<: *backend
+    command: ["node", "dist/apps/notification-service/main.js"]
+    environment:
+      <<: *network-env
+
+  product-service:
+    <<: *backend
+    command: ["node", "dist/apps/product-service/main.js"]
+    environment:
+      <<: *network-env
+      PRODUCT_HOST: 0.0.0.0
+
+  order-service:
+    <<: *backend
+    command: ["node", "dist/apps/order-service/main.js"]
+    environment:
+      <<: *network-env
+      ORDER_SERVICE_HOST: 0.0.0.0
+
+  api-gateway:
+    <<: *backend
+    command: ["node", "dist/apps/api-gateway/main.js"]
+    environment:
+      <<: *network-env
+      API_GATEWAY_PORT: 11000
+    ports:
+      - "${API_GATEWAY_PUBLISH_PORT:-11000}:11000"
+    depends_on:
+      auth-service:
+        condition: service_started
+      customer-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+
+  storefront:
+    profiles: [frontends]
+    build:
+      context: ../genesis-frontend-shop
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:11000/api}
+    restart: unless-stopped
+    environment:
+      # server-side rendering reaches the gateway over the compose network
+      API_INTERNAL_URL: http://api-gateway:11000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+
+  dashboard:
+    profiles: [frontends]
+    build:
+      context: ../genesis-dashboard
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:11000/api}
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    depends_on:
+      - api-gateway
+
+volumes:
+  postgres-data:
+  redis-data:

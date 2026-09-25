@@ -3,7 +3,7 @@ import { PrismaClient } from '../src/generated/prisma/client'
 import * as bcrypt from 'bcrypt';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-const databaseUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/genesis_auth';
+const databaseUrl = process.env.DATABASE_URL || process.env.AUTH_DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/genesis_auth';
 
 // Create adapter
 const adapter = new PrismaPg({
@@ -293,8 +293,9 @@ async function main() {
     // 3. Create default admin user
     console.log('👤 Creating default admin user...');
 
-    const adminEmail = 'admin@genesis.com';
-    const adminPassword = await bcrypt.hash('Admin123!@#', 12);
+    // only used when the account doesn't exist yet — set these for any shared/production database
+    const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@genesis.com';
+    const adminPassword = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD || 'Admin123!@#', 12);
 
     const adminUser = await prisma.user.upsert({
         where: { email: adminEmail },
@@ -334,8 +335,8 @@ async function main() {
     // 4. Create default staff user (optional)
     console.log('👤 Creating default staff user...');
 
-    const staffEmail = 'staff@genesis.com';
-    const staffPassword = await bcrypt.hash('Staff123!@#', 12);
+    const staffEmail = process.env.SEED_STAFF_EMAIL || 'staff@genesis.com';
+    const staffPassword = await bcrypt.hash(process.env.SEED_STAFF_PASSWORD || 'Staff123!@#', 12);
 
     const staffUser = await prisma.user.upsert({
         where: { email: staffEmail },
@@ -374,8 +375,8 @@ async function main() {
     console.log('✅ Database seeding completed!');
     console.log(`
   📋 Default Users:
-  - Admin: admin@genesis.com / Admin123!@#
-  - Staff: staff@genesis.com / Staff123!@#
+  - Admin: ${adminEmail}${process.env.SEED_ADMIN_PASSWORD ? '' : ' / Admin123!@#'}
+  - Staff: ${staffEmail}${process.env.SEED_STAFF_PASSWORD ? '' : ' / Staff123!@#'}
   
   📋 Default Roles:
   - super_admin: Full system control

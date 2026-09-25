@@ -16,19 +16,9 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { type JwtPayload } from '../common/types/jwt-payload.type';
-import { CheckoutDto, DELIVERY_METHODS } from '../dto/Checkout.dto';
+import { CheckoutDto, PayOrderDto } from '../dto/Checkout.dto';
+import { priceCartItems } from '../common/utils/rpc.util';
 import { CancelOrderBodyDto, CreateReturnDto } from '../dto/Returns.dto';
-
-interface ProductSnapshot {
-    id: string;
-    sku: string;
-    name: string;
-    price: string | number;
-    costPrice?: string | number | null;
-    isActive: boolean;
-    isInStock: boolean;
-    images?: { url: string }[];
-}
 
 /**
  * Shopper-facing orders. Any authenticated user can place and read their
@@ -43,47 +33,19 @@ export class MyOrdersController {
         @Inject('PRODUCT_SERVICE') private readonly productClient: ClientProxy,
     ) { }
 
+    /**
+     * Place an order. For M-Pesa the response carries `payment` (the STK
+     * prompt just sent to the phone); the storefront then polls
+     * GET me/orders/:id/payment until it settles.
+     */
     @Post()
     async checkout(@CurrentUser() user: JwtPayload, @Body() dto: CheckoutDto) {
-        if (dto.paymentMethod === 'cod' && dto.deliveryMethod !== 'same-day') {
-            throw new HttpException('Pay on delivery is only available for same-day delivery in Nairobi', HttpStatus.BAD_REQUEST);
-        }
         const phone = normalizeKenyanPhone(dto.phone);
         if (!phone) {
             throw new HttpException('Enter a valid phone number, e.g. 0712 345 678', HttpStatus.BAD_REQUEST);
         }
 
-        // merge duplicate lines, then price each one from the product service
-        const qty = new Map<string, number>();
-        for (const i of dto.items) qty.set(i.productId, (qty.get(i.productId) ?? 0) + i.quantity);
-
-        const items = await Promise.all(
-            [...qty].map(async ([productId, quantity]) => {
-                const p = await this.send<ProductSnapshot>(this.productClient, 'product.find.one', { id: productId })
-                    .catch((e: HttpException) => {
-                        if (e.getStatus?.() === HttpStatus.NOT_FOUND) return null;
-                        throw e;
-                    });
-                if (!p || !p.isActive) {
-                    throw new HttpException('One of the items in your cart is no longer available', HttpStatus.CONFLICT);
-                }
-                if (!p.isInStock) {
-                    throw new HttpException(`${p.name} is out of stock`, HttpStatus.CONFLICT);
-                }
-                return {
-                    productId: p.id,
-                    sku: p.sku,
-                    name: p.name,
-                    image: p.images?.[0]?.url,
-                    unitPrice: Number(p.price),
-                    // snapshot the cost so profit reports stay right after cost prices change
-                    ...(p.costPrice != null ? { unitCost: Number(p.costPrice) } : {}),
-                    quantity,
-                };
-            }),
-        );
-
-        const delivery = DELIVERY_METHODS[dto.deliveryMethod];
+        const items = await priceCartItems(this.productClient, dto.items);
         const order = await this.send(this.orderClient, 'order.place', {
             customerId: user.sub,
             customerEmail: user.email,
@@ -99,14 +61,30 @@ export class MyOrdersController {
                 phone,
             },
             paymentMethod: dto.paymentMethod,
-            shippingAmount: delivery.fee,
             currency: 'KES',
-            customerNote: [`Delivery: ${delivery.label}`, dto.note?.trim()].filter(Boolean).join(' — '),
+            customerNote: dto.note?.trim() || undefined,
         });
 
         // the order is placed — empty the saved cart (best effort; the storefront clears its copy too)
         await this.send(this.productClient, 'cart.clear', { userId: user.sub }).catch(() => undefined);
         return order;
+    }
+
+    /** Where an M-Pesa payment stands; also settles it with Safaricom if the callback is late. */
+    @Get(':id/payment')
+    async paymentStatus(@CurrentUser() user: JwtPayload, @Param('id', ParseUUIDPipe) id: string) {
+        return this.send(this.orderClient, 'payment.status', { orderId: id, customerId: user.sub });
+    }
+
+    /** Re-send the M-Pesa prompt (declined, timed out, or wrong phone). */
+    @Post(':id/pay')
+    async pay(@CurrentUser() user: JwtPayload, @Param('id', ParseUUIDPipe) id: string, @Body() dto: PayOrderDto) {
+        let phone: string | undefined;
+        if (dto.phone?.trim()) {
+            phone = normalizeKenyanPhone(dto.phone) ?? undefined;
+            if (!phone) throw new HttpException('Enter a valid phone number, e.g. 0712 345 678', HttpStatus.BAD_REQUEST);
+        }
+        return this.send(this.orderClient, 'payment.mpesa.start', { orderId: id, customerId: user.sub, phone });
     }
 
     @Get()
@@ -150,15 +128,17 @@ export class MyOrdersController {
             allowedTransitions?: string[];
             _count?: unknown;
             cancelReason?: string | null;
+            payments?: { id: string; status: string; amount: string; receiptNumber: string | null; createdAt: string; paidAt: string | null }[];
         }>(this.orderClient, 'order.find.one', { id });
         // 404 rather than 403 so order ids of other customers aren't confirmed to exist
         if (order.customerId !== user.sub) {
             throw new HttpException('Order not found', HttpStatus.NOT_FOUND);
         }
         // strip admin-only data: internal timeline entries, who made each change, admin actions
-        const { allowedTransitions: _t, _count: _c, ...rest } = order;
+        const { allowedTransitions: _t, _count: _c, payments, ...rest } = order;
         return {
             ...rest,
+            payments: (payments ?? []).map(({ id, status, amount, receiptNumber, createdAt, paidAt }) => ({ id, status, amount, receiptNumber, createdAt, paidAt })),
             statusHistory: (order.statusHistory ?? [])
                 .filter((h) => h.isPublic !== false)
                 .map(({ id, type, status, note, location, createdAt }) => ({ id, type, status, note, location, createdAt })),
