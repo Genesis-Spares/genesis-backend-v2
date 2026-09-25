@@ -66,6 +66,29 @@ export class EmailService {
         });
     }
 
+    async sendInviteEmail(
+        to: string,
+        firstName: string,
+        inviteUrl: string,
+        expiresInHours: number,
+    ): Promise<void> {
+        const html = await this.templateService.render(
+            'invite',
+            {
+                firstName,
+                inviteUrl,
+                expiresInHours: expiresInHours.toString(),
+            },
+        );
+
+        await this.sendEmail({
+            to,
+            subject: "You've been invited to Genesis",
+            html,
+            text: `Hi ${firstName}, you've been invited to Genesis. Verify your email here: ${inviteUrl} (expires in ${expiresInHours} hours)`,
+        });
+    }
+
     async sendOTPEmail(
         to: string,
         firstName: string,
@@ -122,11 +145,24 @@ export class EmailService {
     }
 
 
+    /** Contact-form emails: acknowledgement to the customer, or alert to the support inbox. */
+    async sendSupportEmail(to: string, subject: string, view: Record<string, unknown>, text: string, replyTo?: string): Promise<void> {
+        const html = await this.templateService.render('support', view);
+        await this.sendEmail({ to, subject, html, text, replyTo });
+    }
+
+    /** Order lifecycle email — content comes from buildOrderMessage(). */
+    async sendOrderEmail(to: string, msg: { subject: string; text: string; view: Record<string, unknown> }): Promise<void> {
+        const html = await this.templateService.render('order', msg.view);
+        await this.sendEmail({ to, subject: msg.subject, html, text: msg.text });
+    }
+
     private async sendEmail(options: {
         to: string;
         subject: string;
         html: string;
         text?: string;
+        replyTo?: string;
     }): Promise<void> {
         try {
             const info = await this.transporter.sendMail({
@@ -135,6 +171,7 @@ export class EmailService {
                 subject: options.subject,
                 html: options.html,
                 text: options.text,
+                replyTo: options.replyTo,
             })
             this.logger.log(`Email sent to ${options.to}: ${info.messageId}`);
         } catch (error) {

@@ -1,0 +1,186 @@
+// apps/order-service/prisma/schema.prisma
+generator client {
+    provider = "prisma-client-js"
+    output   = "../src/generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model Order {
+    id          String @id @default(uuid())
+    orderNumber String @unique @map("order_number")
+
+    // Denormalized from Customer Service (no FK — separate DB)
+    customerId    String  @map("customer_id")
+    customerEmail String  @map("customer_email")
+    customerName  String  @map("customer_name")
+    customerPhone String? @map("customer_phone")
+
+    status        String @default("PENDING") // PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED, REFUNDED
+    paymentStatus String @default("PENDING") @map("payment_status") // PENDING, PAID, FAILED, REFUNDED, PARTIALLY_REFUNDED
+    paymentMethod String? @map("payment_method")
+
+    currency String @default("KES")
+
+    // Money — snapshotted at order time
+    subtotal       Decimal @db.Decimal(10, 2)
+    taxAmount      Decimal @default(0) @map("tax_amount") @db.Decimal(10, 2)
+    shippingAmount Decimal @default(0) @map("shipping_amount") @db.Decimal(10, 2)
+    discountAmount Decimal @default(0) @map("discount_amount") @db.Decimal(10, 2)
+    total          Decimal @db.Decimal(10, 2)
+
+    couponCode   String? @map("coupon_code")
+    customerNote String? @map("customer_note")
+
+    // Address snapshots (immutable copy — not a live reference to the customer's saved address)
+    shippingAddress Json  @map("shipping_address")
+    billingAddress  Json? @map("billing_address")
+
+    trackingNumber  String? @map("tracking_number")
+    trackingCarrier String? @map("tracking_carrier")
+    estimatedDeliveryAt DateTime? @map("estimated_delivery_at")
+
+    shippedAt    DateTime? @map("shipped_at")
+    deliveredAt  DateTime? @map("delivered_at")
+    cancelledAt  DateTime? @map("cancelled_at")
+    cancelReason String?   @map("cancel_reason")
+
+    items         OrderItem[]
+    statusHistory OrderStatusHistory[]
+    notes         OrderNote[]
+    returns       ReturnRequest[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([customerId])
+    @@index([status])
+    @@index([paymentStatus])
+    @@index([orderNumber])
+    @@index([createdAt])
+    @@map("orders")
+}
+
+model OrderItem {
+    id      String @id @default(uuid())
+    orderId String @map("order_id")
+
+    // Denormalized from Product Service (no FK — separate DB)
+    productId String  @map("product_id")
+    variantId String? @map("variant_id")
+    sku       String
+    name      String
+    image     String?
+
+    unitPrice  Decimal @map("unit_price") @db.Decimal(10, 2)
+    // cost of the part when it was sold (for profit reports); null on orders placed before this was recorded
+    unitCost   Decimal? @map("unit_cost") @db.Decimal(10, 2)
+    quantity   Int
+    subtotal   Decimal @db.Decimal(10, 2)
+    attributes Json?
+
+    order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([orderId])
+    @@index([productId])
+    @@map("order_items")
+}
+
+model OrderStatusHistory {
+    id      String @id @default(uuid())
+    orderId String @map("order_id")
+
+    // STATUS = lifecycle change, TRACKING = shipment/location update,
+    // PAYMENT = payment status change, UPDATE = other admin edit
+    type      String  @default("STATUS")
+    status    String // order status at the time of the entry
+    note      String?
+    location  String? // e.g. "Nairobi dispatch hub" — shown on the customer's tracker
+    isPublic  Boolean @default(true) @map("is_public") // false = internal, hidden from the customer
+    changedBy String? @map("changed_by") // userId of the admin who made the change, if any
+    actor     String? // display label for changedBy (admin email) or "system" / "customer"
+
+    order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([orderId])
+    @@index([createdAt])
+    @@map("order_status_history")
+}
+
+model OrderNote {
+    id      String @id @default(uuid())
+    orderId String @map("order_id")
+
+    content    String
+    authorId   String  @map("author_id")
+    isInternal Boolean @default(true) @map("is_internal")
+
+    order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([orderId])
+    @@map("order_notes")
+}
+
+/// Customer return (RMA). Lifecycle: REQUESTED → APPROVED | REJECTED → RECEIVED → REFUNDED.
+/// Exchanges are handled as a refund + a new order for now.
+model ReturnRequest {
+    id        String @id @default(uuid())
+    rmaNumber String @unique @map("rma_number") // RMA-20260925-4821
+    orderId   String @map("order_id")
+    customerId String @map("customer_id")
+
+    status     String  @default("REQUESTED") // REQUESTED, APPROVED, REJECTED, RECEIVED, REFUNDED
+    reason     String // WRONG_PART, DOESNT_FIT, DAMAGED, FAULTY, NOT_AS_DESCRIBED, CHANGED_MIND
+    details    String?
+    photos     String[] // image URLs (Cloudinary)
+    resolution String  @default("REFUND") // REFUND | EXCHANGE (customer's preference)
+
+    // decisions
+    instructions  String? // shown to the customer on approval (how to send it back)
+    rejectReason  String? @map("reject_reason")
+    restocked     Boolean @default(false)
+    refundAmount  Decimal? @map("refund_amount") @db.Decimal(10, 2)
+    adminNote     String? @map("admin_note") // internal only
+
+    approvedAt DateTime? @map("approved_at")
+    rejectedAt DateTime? @map("rejected_at")
+    receivedAt DateTime? @map("received_at")
+    refundedAt DateTime? @map("refunded_at")
+
+    items ReturnItem[]
+    order Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([orderId])
+    @@index([customerId])
+    @@index([status])
+    @@map("return_requests")
+}
+
+model ReturnItem {
+    id          String  @id @default(uuid())
+    returnId    String  @map("return_id")
+    orderItemId String  @map("order_item_id")
+    productId   String  @map("product_id")
+    sku         String
+    name        String
+    quantity    Int
+    unitPrice   Decimal @map("unit_price") @db.Decimal(10, 2)
+
+    returnRequest ReturnRequest @relation(fields: [returnId], references: [id], onDelete: Cascade)
+
+    @@index([returnId])
+    @@index([orderItemId])
+    @@map("return_items")
+}

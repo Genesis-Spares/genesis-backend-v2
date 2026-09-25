@@ -4,6 +4,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from '../controllers/Auth.controller';
 import { MeController } from '../controllers/Me.controller';
+import { SidebarController } from '../controllers/Sidebar.controller';
+import { UserController } from '../controllers/User.controller';
+import { RoleController } from '../controllers/Role.controller';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 
@@ -35,7 +38,7 @@ import { PermissionsGuard } from '../common/guards/permissions.guard';
 
         }),
     ],
-    controllers: [AuthController, MeController],
+    controllers: [AuthController, MeController, SidebarController, UserController, RoleController],
     // exported so any other feature module in the gateway can guard its routes
     providers: [JwtAuthGuard, PermissionsGuard],
     exports: [JwtModule, JwtAuthGuard, PermissionsGuard],

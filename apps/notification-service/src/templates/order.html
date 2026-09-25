@@ -1,0 +1,87 @@
+<!-- apps/notification-service/src/templates/order.html — all order lifecycle emails (see services/order-messages.ts) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>{{headline}} — Genesis</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#14161c;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f7f9;padding:32px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#14161c;">
+        <tr><td align="center">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e6e9ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+                <!-- brand bar -->
+                <tr><td style="background:#14161c;padding:20px 28px;">
+                    <span style="font-size:22px;font-weight:900;letter-spacing:-0.5px;color:#ffffff;">GENESIS<span style="color:#e4531f;">.</span></span>
+                    <span style="display:block;font-size:10px;font-weight:700;letter-spacing:3px;color:#e4531f;margin-top:2px;">INVESTMENT</span>
+                </td></tr>
+                <tr><td style="height:4px;background:{{accent}};line-height:4px;font-size:0;">&nbsp;</td></tr>
+
+                <tr><td style="padding:32px 28px 8px;">
+                    <p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8a93a0;">Order {{orderNumber}}</p>
+                    <h1 style="margin:0 0 14px;font-size:24px;line-height:1.25;font-weight:800;color:#14161c;">{{headline}}</h1>
+                    <p style="margin:0;font-size:15px;line-height:1.6;color:#3d4552;">{{intro}}</p>
+                </td></tr>
+
+                {{#if message}}
+                <tr><td style="padding:16px 28px 0;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fdf0e9;border-left:4px solid #e4531f;border-radius:6px;">
+                        <tr><td style="padding:12px 16px;font-size:14px;line-height:1.5;color:#14161c;">
+                            <strong>Note from our team:</strong> {{message}}{{#if location}} <span style="color:#5e6773;">({{location}})</span>{{/if}}
+                        </td></tr>
+                    </table>
+                </td></tr>
+                {{/if}}
+
+                {{#if shipping_details}}
+                <tr><td style="padding:20px 28px 0;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f7f9;border-radius:10px;">
+                        {{#if shipping_details.carrier}}<tr><td style="padding:12px 16px 4px;font-size:13px;color:#5e6773;">Courier</td><td align="right" style="padding:12px 16px 4px;font-size:14px;font-weight:600;">{{shipping_details.carrier}}</td></tr>{{/if}}
+                        {{#if shipping_details.trackingNumber}}<tr><td style="padding:4px 16px;font-size:13px;color:#5e6773;">Tracking no.</td><td align="right" style="padding:4px 16px;font-size:14px;font-weight:600;font-family:'Courier New',monospace;">{{shipping_details.trackingNumber}}</td></tr>{{/if}}
+                        {{#if shipping_details.eta}}<tr><td style="padding:4px 16px 12px;font-size:13px;color:#5e6773;">Expected</td><td align="right" style="padding:4px 16px 12px;font-size:14px;font-weight:600;">{{shipping_details.eta}}</td></tr>{{/if}}
+                    </table>
+                </td></tr>
+                {{/if}}
+
+                {{#if showItems}}
+                <tr><td style="padding:24px 28px 0;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #eaecf1;">
+                        {{#each items}}
+                        <tr>
+                            <td style="padding:12px 0;border-bottom:1px solid #eaecf1;font-size:14px;line-height:1.4;">
+                                <strong style="color:#14161c;">{{name}}</strong><br>
+                                <span style="font-size:12px;color:#8a93a0;">{{sku}} · {{quantity}} × {{unitPrice}}</span>
+                            </td>
+                            <td align="right" valign="top" style="padding:12px 0;border-bottom:1px solid #eaecf1;font-size:14px;font-weight:600;white-space:nowrap;">{{lineTotal}}</td>
+                        </tr>
+                        {{/each}}
+                        <tr><td style="padding:10px 0 2px;font-size:13px;color:#5e6773;">Subtotal</td><td align="right" style="padding:10px 0 2px;font-size:13px;color:#5e6773;">{{subtotal}}</td></tr>
+                        <tr><td style="padding:2px 0;font-size:13px;color:#5e6773;">Delivery</td><td align="right" style="padding:2px 0;font-size:13px;color:#5e6773;">{{shipping}}</td></tr>
+                        {{#if discount}}<tr><td style="padding:2px 0;font-size:13px;color:#5e6773;">Discount</td><td align="right" style="padding:2px 0;font-size:13px;color:#5e6773;">−{{discount}}</td></tr>{{/if}}
+                        <tr><td style="padding:8px 0 0;font-size:16px;font-weight:800;">Total</td><td align="right" style="padding:8px 0 0;font-size:16px;font-weight:800;">{{total}}</td></tr>
+                    </table>
+                </td></tr>
+                <tr><td style="padding:16px 28px 0;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td valign="top" style="padding:0 8px 0 0;font-size:13px;line-height:1.5;color:#3d4552;"><span style="color:#8a93a0;">Payment</span><br>{{payment}}</td>
+                            {{#if address}}<td valign="top" style="padding:0 0 0 8px;font-size:13px;line-height:1.5;color:#3d4552;"><span style="color:#8a93a0;">Delivering to</span><br>{{address}}</td>{{/if}}
+                        </tr>
+                    </table>
+                </td></tr>
+                {{/if}}
+
+                <tr><td align="center" style="padding:28px 28px 32px;">
+                    <a href="{{orderUrl}}" style="display:inline-block;background:#e4531f;color:#ffffff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 30px;border-radius:10px;">{{cta}}</a>
+                </td></tr>
+
+                <tr><td style="background:#f6f7f9;padding:18px 28px;font-size:12px;line-height:1.6;color:#8a93a0;text-align:center;">
+                    Questions about your order? Just reply to this email.<br>
+                    © {{year}} Genesis Investment · Genuine car spare parts, delivered across Kenya
+                </td></tr>
+            </table>
+        </td></tr>
+    </table>
+</body>
+</html>

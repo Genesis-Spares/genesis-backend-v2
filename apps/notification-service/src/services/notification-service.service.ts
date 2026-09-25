@@ -21,11 +21,12 @@ export class NotificationService {
     }): Promise<void> {
         try {
             await this.prisma.notification.create({
+                // delivery log: "EMAIL ORDER_SHIPPED · SENT", details (order no., error…) as JSON
                 data: {
                     userId: data.userId,
                     type: data.type,
-                    title: 'test',
-                    message: 'test message',
+                    title: `${data.type} ${data.channel} · ${data.status}`,
+                    message: JSON.stringify(data.metadata ?? {}),
                     isRead: false,
                 },
             });

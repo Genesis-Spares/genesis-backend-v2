@@ -7,6 +7,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { PrismaService } from '../libs/prisma/prisma.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { OTPService } from './services/otp.service';
+import { ActivityLogService } from './services/activity-log.service';
+import { UserManagementService } from './services/user-management.service';
+import { RoleManagementService } from './services/role-management.service';
 
 @Module({
     imports: [
@@ -51,6 +54,13 @@ import { OTPService } from './services/otp.service';
         ]),
     ],
     controllers: [AuthServiceController],
-    providers: [AuthService, PrismaService, OTPService],
+    providers: [
+        AuthService,
+        PrismaService,
+        OTPService,
+        ActivityLogService,
+        UserManagementService,
+        RoleManagementService,
+    ],
 })
 export class AuthServiceModule { }

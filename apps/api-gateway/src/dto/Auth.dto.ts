@@ -32,6 +32,13 @@ export class RefreshDto {
     refreshToken: string;
 }
 
+// The invited user only has the token from the link in their email — no
+// email/password to pair it with.
+export class VerifyInviteDto {
+    @IsString()
+    token: string;
+}
+
 
 export class SendOTPDto {
     @IsEmail()
@@ -82,7 +89,7 @@ export class ResetPasswordDto {
     @IsString({ message: 'newPassword must be a string' })
     @MinLength(8, { message: 'newPassword must be at least 8 characters' })
     @MaxLength(32, { message: 'newPassword must be at most 32 characters' })
-    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/, {
         message: 'newPassword must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
     })
     newPassword: string;

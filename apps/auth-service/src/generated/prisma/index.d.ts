@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model UserActivity
+ * 
+ */
+export type UserActivity = $Result.DefaultSelection<Prisma.$UserActivityPayload>
+/**
  * Model OTP
  * 
  */
@@ -179,6 +184,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.userActivity`: Exposes CRUD operations for the **UserActivity** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserActivities
+    * const userActivities = await prisma.userActivity.findMany()
+    * ```
+    */
+  get userActivity(): Prisma.UserActivityDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.oTP`: Exposes CRUD operations for the **OTP** model.
@@ -687,6 +702,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    UserActivity: 'UserActivity',
     OTP: 'OTP',
     Role: 'Role',
     Permission: 'Permission',
@@ -708,7 +724,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "oTP" | "role" | "permission" | "userRole" | "rolePermission" | "refreshToken"
+      modelProps: "user" | "userActivity" | "oTP" | "role" | "permission" | "userRole" | "rolePermission" | "refreshToken"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -783,6 +799,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      UserActivity: {
+        payload: Prisma.$UserActivityPayload<ExtArgs>
+        fields: Prisma.UserActivityFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserActivityFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserActivityFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>
+          }
+          findFirst: {
+            args: Prisma.UserActivityFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserActivityFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>
+          }
+          findMany: {
+            args: Prisma.UserActivityFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>[]
+          }
+          create: {
+            args: Prisma.UserActivityCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>
+          }
+          createMany: {
+            args: Prisma.UserActivityCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UserActivityCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>[]
+          }
+          delete: {
+            args: Prisma.UserActivityDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>
+          }
+          update: {
+            args: Prisma.UserActivityUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserActivityDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserActivityUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UserActivityUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>[]
+          }
+          upsert: {
+            args: Prisma.UserActivityUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserActivityPayload>
+          }
+          aggregate: {
+            args: Prisma.UserActivityAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserActivity>
+          }
+          groupBy: {
+            args: Prisma.UserActivityGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserActivityGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UserActivityCountArgs<ExtArgs>
+            result: $Utils.Optional<UserActivityCountAggregateOutputType> | number
           }
         }
       }
@@ -1354,6 +1444,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    userActivity?: UserActivityOmit
     oTP?: OTPOmit
     role?: RoleOmit
     permission?: PermissionOmit
@@ -1442,11 +1533,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     roles: number
     opts: number
+    activities: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | UserCountOutputTypeCountRolesArgs
     opts?: boolean | UserCountOutputTypeCountOptsArgs
+    activities?: boolean | UserCountOutputTypeCountActivitiesArgs
   }
 
   // Custom InputTypes
@@ -1472,6 +1565,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountOptsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OTPWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserActivityWhereInput
   }
 
 
@@ -1569,6 +1669,7 @@ export namespace Prisma {
     phone: string | null
     isActive: boolean | null
     isEmailVerified: boolean | null
+    status: string | null
     createAt: Date | null
     updateAt: Date | null
     resetToken: string | null
@@ -1584,6 +1685,7 @@ export namespace Prisma {
     phone: string | null
     isActive: boolean | null
     isEmailVerified: boolean | null
+    status: string | null
     createAt: Date | null
     updateAt: Date | null
     resetToken: string | null
@@ -1599,6 +1701,7 @@ export namespace Prisma {
     phone: number
     isActive: number
     isEmailVerified: number
+    status: number
     createAt: number
     updateAt: number
     resetToken: number
@@ -1616,6 +1719,7 @@ export namespace Prisma {
     phone?: true
     isActive?: true
     isEmailVerified?: true
+    status?: true
     createAt?: true
     updateAt?: true
     resetToken?: true
@@ -1631,6 +1735,7 @@ export namespace Prisma {
     phone?: true
     isActive?: true
     isEmailVerified?: true
+    status?: true
     createAt?: true
     updateAt?: true
     resetToken?: true
@@ -1646,6 +1751,7 @@ export namespace Prisma {
     phone?: true
     isActive?: true
     isEmailVerified?: true
+    status?: true
     createAt?: true
     updateAt?: true
     resetToken?: true
@@ -1734,6 +1840,7 @@ export namespace Prisma {
     phone: string | null
     isActive: boolean
     isEmailVerified: boolean
+    status: string
     createAt: Date
     updateAt: Date
     resetToken: string | null
@@ -1766,12 +1873,14 @@ export namespace Prisma {
     phone?: boolean
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: boolean
     createAt?: boolean
     updateAt?: boolean
     resetToken?: boolean
     resetTokenExpires?: boolean
     roles?: boolean | User$rolesArgs<ExtArgs>
     opts?: boolean | User$optsArgs<ExtArgs>
+    activities?: boolean | User$activitiesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1784,6 +1893,7 @@ export namespace Prisma {
     phone?: boolean
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: boolean
     createAt?: boolean
     updateAt?: boolean
     resetToken?: boolean
@@ -1799,6 +1909,7 @@ export namespace Prisma {
     phone?: boolean
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: boolean
     createAt?: boolean
     updateAt?: boolean
     resetToken?: boolean
@@ -1814,16 +1925,18 @@ export namespace Prisma {
     phone?: boolean
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: boolean
     createAt?: boolean
     updateAt?: boolean
     resetToken?: boolean
     resetTokenExpires?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "firstname" | "lastName" | "phone" | "isActive" | "isEmailVerified" | "createAt" | "updateAt" | "resetToken" | "resetTokenExpires", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "firstname" | "lastName" | "phone" | "isActive" | "isEmailVerified" | "status" | "createAt" | "updateAt" | "resetToken" | "resetTokenExpires", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     roles?: boolean | User$rolesArgs<ExtArgs>
     opts?: boolean | User$optsArgs<ExtArgs>
+    activities?: boolean | User$activitiesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1834,6 +1947,7 @@ export namespace Prisma {
     objects: {
       roles: Prisma.$UserRolePayload<ExtArgs>[]
       opts: Prisma.$OTPPayload<ExtArgs>[]
+      activities: Prisma.$UserActivityPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1844,6 +1958,7 @@ export namespace Prisma {
       phone: string | null
       isActive: boolean
       isEmailVerified: boolean
+      status: string
       createAt: Date
       updateAt: Date
       resetToken: string | null
@@ -2244,6 +2359,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     roles<T extends User$rolesArgs<ExtArgs> = {}>(args?: Subset<T, User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     opts<T extends User$optsArgs<ExtArgs> = {}>(args?: Subset<T, User$optsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OTPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    activities<T extends User$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2281,6 +2397,7 @@ export namespace Prisma {
     readonly phone: FieldRef<"User", 'String'>
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly isEmailVerified: FieldRef<"User", 'Boolean'>
+    readonly status: FieldRef<"User", 'String'>
     readonly createAt: FieldRef<"User", 'DateTime'>
     readonly updateAt: FieldRef<"User", 'DateTime'>
     readonly resetToken: FieldRef<"User", 'String'>
@@ -2726,6 +2843,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.activities
+   */
+  export type User$activitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    where?: UserActivityWhereInput
+    orderBy?: UserActivityOrderByWithRelationInput | UserActivityOrderByWithRelationInput[]
+    cursor?: UserActivityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserActivityScalarFieldEnum | UserActivityScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2741,6 +2882,1117 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model UserActivity
+   */
+
+  export type AggregateUserActivity = {
+    _count: UserActivityCountAggregateOutputType | null
+    _min: UserActivityMinAggregateOutputType | null
+    _max: UserActivityMaxAggregateOutputType | null
+  }
+
+  export type UserActivityMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    action: string | null
+    resource: string | null
+    resourceId: string | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date | null
+  }
+
+  export type UserActivityMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    action: string | null
+    resource: string | null
+    resourceId: string | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date | null
+  }
+
+  export type UserActivityCountAggregateOutputType = {
+    id: number
+    userId: number
+    action: number
+    resource: number
+    resourceId: number
+    metadata: number
+    ipAddress: number
+    userAgent: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type UserActivityMinAggregateInputType = {
+    id?: true
+    userId?: true
+    action?: true
+    resource?: true
+    resourceId?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+  }
+
+  export type UserActivityMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    action?: true
+    resource?: true
+    resourceId?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+  }
+
+  export type UserActivityCountAggregateInputType = {
+    id?: true
+    userId?: true
+    action?: true
+    resource?: true
+    resourceId?: true
+    metadata?: true
+    ipAddress?: true
+    userAgent?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type UserActivityAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserActivity to aggregate.
+     */
+    where?: UserActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserActivities to fetch.
+     */
+    orderBy?: UserActivityOrderByWithRelationInput | UserActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserActivities
+    **/
+    _count?: true | UserActivityCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserActivityMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserActivityMaxAggregateInputType
+  }
+
+  export type GetUserActivityAggregateType<T extends UserActivityAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserActivity]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserActivity[P]>
+      : GetScalarType<T[P], AggregateUserActivity[P]>
+  }
+
+
+
+
+  export type UserActivityGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserActivityWhereInput
+    orderBy?: UserActivityOrderByWithAggregationInput | UserActivityOrderByWithAggregationInput[]
+    by: UserActivityScalarFieldEnum[] | UserActivityScalarFieldEnum
+    having?: UserActivityScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserActivityCountAggregateInputType | true
+    _min?: UserActivityMinAggregateInputType
+    _max?: UserActivityMaxAggregateInputType
+  }
+
+  export type UserActivityGroupByOutputType = {
+    id: string
+    userId: string
+    action: string
+    resource: string | null
+    resourceId: string | null
+    metadata: JsonValue | null
+    ipAddress: string | null
+    userAgent: string | null
+    createdAt: Date
+    _count: UserActivityCountAggregateOutputType | null
+    _min: UserActivityMinAggregateOutputType | null
+    _max: UserActivityMaxAggregateOutputType | null
+  }
+
+  type GetUserActivityGroupByPayload<T extends UserActivityGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserActivityGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserActivityGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserActivityGroupByOutputType[P]>
+            : GetScalarType<T[P], UserActivityGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserActivitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    action?: boolean
+    resource?: boolean
+    resourceId?: boolean
+    metadata?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userActivity"]>
+
+  export type UserActivitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    action?: boolean
+    resource?: boolean
+    resourceId?: boolean
+    metadata?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userActivity"]>
+
+  export type UserActivitySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    action?: boolean
+    resource?: boolean
+    resourceId?: boolean
+    metadata?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userActivity"]>
+
+  export type UserActivitySelectScalar = {
+    id?: boolean
+    userId?: boolean
+    action?: boolean
+    resource?: boolean
+    resourceId?: boolean
+    metadata?: boolean
+    ipAddress?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+  }
+
+  export type UserActivityOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "action" | "resource" | "resourceId" | "metadata" | "ipAddress" | "userAgent" | "createdAt", ExtArgs["result"]["userActivity"]>
+  export type UserActivityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type UserActivityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type UserActivityIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $UserActivityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserActivity"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      action: string
+      resource: string | null
+      resourceId: string | null
+      metadata: Prisma.JsonValue | null
+      ipAddress: string | null
+      userAgent: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["userActivity"]>
+    composites: {}
+  }
+
+  type UserActivityGetPayload<S extends boolean | null | undefined | UserActivityDefaultArgs> = $Result.GetResult<Prisma.$UserActivityPayload, S>
+
+  type UserActivityCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserActivityFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserActivityCountAggregateInputType | true
+    }
+
+  export interface UserActivityDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserActivity'], meta: { name: 'UserActivity' } }
+    /**
+     * Find zero or one UserActivity that matches the filter.
+     * @param {UserActivityFindUniqueArgs} args - Arguments to find a UserActivity
+     * @example
+     * // Get one UserActivity
+     * const userActivity = await prisma.userActivity.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserActivityFindUniqueArgs>(args: SelectSubset<T, UserActivityFindUniqueArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserActivity that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserActivityFindUniqueOrThrowArgs} args - Arguments to find a UserActivity
+     * @example
+     * // Get one UserActivity
+     * const userActivity = await prisma.userActivity.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserActivityFindUniqueOrThrowArgs>(args: SelectSubset<T, UserActivityFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserActivity that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserActivityFindFirstArgs} args - Arguments to find a UserActivity
+     * @example
+     * // Get one UserActivity
+     * const userActivity = await prisma.userActivity.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserActivityFindFirstArgs>(args?: SelectSubset<T, UserActivityFindFirstArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserActivity that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserActivityFindFirstOrThrowArgs} args - Arguments to find a UserActivity
+     * @example
+     * // Get one UserActivity
+     * const userActivity = await prisma.userActivity.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserActivityFindFirstOrThrowArgs>(args?: SelectSubset<T, UserActivityFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserActivities that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserActivityFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserActivities
+     * const userActivities = await prisma.userActivity.findMany()
+     * 
+     * // Get first 10 UserActivities
+     * const userActivities = await prisma.userActivity.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userActivityWithIdOnly = await prisma.userActivity.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserActivityFindManyArgs>(args?: SelectSubset<T, UserActivityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserActivity.
+     * @param {UserActivityCreateArgs} args - Arguments to create a UserActivity.
+     * @example
+     * // Create one UserActivity
+     * const UserActivity = await prisma.userActivity.create({
+     *   data: {
+     *     // ... data to create a UserActivity
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserActivityCreateArgs>(args: SelectSubset<T, UserActivityCreateArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserActivities.
+     * @param {UserActivityCreateManyArgs} args - Arguments to create many UserActivities.
+     * @example
+     * // Create many UserActivities
+     * const userActivity = await prisma.userActivity.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserActivityCreateManyArgs>(args?: SelectSubset<T, UserActivityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UserActivities and returns the data saved in the database.
+     * @param {UserActivityCreateManyAndReturnArgs} args - Arguments to create many UserActivities.
+     * @example
+     * // Create many UserActivities
+     * const userActivity = await prisma.userActivity.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UserActivities and only return the `id`
+     * const userActivityWithIdOnly = await prisma.userActivity.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserActivityCreateManyAndReturnArgs>(args?: SelectSubset<T, UserActivityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UserActivity.
+     * @param {UserActivityDeleteArgs} args - Arguments to delete one UserActivity.
+     * @example
+     * // Delete one UserActivity
+     * const UserActivity = await prisma.userActivity.delete({
+     *   where: {
+     *     // ... filter to delete one UserActivity
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserActivityDeleteArgs>(args: SelectSubset<T, UserActivityDeleteArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserActivity.
+     * @param {UserActivityUpdateArgs} args - Arguments to update one UserActivity.
+     * @example
+     * // Update one UserActivity
+     * const userActivity = await prisma.userActivity.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserActivityUpdateArgs>(args: SelectSubset<T, UserActivityUpdateArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserActivities.
+     * @param {UserActivityDeleteManyArgs} args - Arguments to filter UserActivities to delete.
+     * @example
+     * // Delete a few UserActivities
+     * const { count } = await prisma.userActivity.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserActivityDeleteManyArgs>(args?: SelectSubset<T, UserActivityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserActivityUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserActivities
+     * const userActivity = await prisma.userActivity.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserActivityUpdateManyArgs>(args: SelectSubset<T, UserActivityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserActivities and returns the data updated in the database.
+     * @param {UserActivityUpdateManyAndReturnArgs} args - Arguments to update many UserActivities.
+     * @example
+     * // Update many UserActivities
+     * const userActivity = await prisma.userActivity.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UserActivities and only return the `id`
+     * const userActivityWithIdOnly = await prisma.userActivity.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserActivityUpdateManyAndReturnArgs>(args: SelectSubset<T, UserActivityUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UserActivity.
+     * @param {UserActivityUpsertArgs} args - Arguments to update or create a UserActivity.
+     * @example
+     * // Update or create a UserActivity
+     * const userActivity = await prisma.userActivity.upsert({
+     *   create: {
+     *     // ... data to create a UserActivity
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserActivity we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserActivityUpsertArgs>(args: SelectSubset<T, UserActivityUpsertArgs<ExtArgs>>): Prisma__UserActivityClient<$Result.GetResult<Prisma.$UserActivityPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UserActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserActivityCountArgs} args - Arguments to filter UserActivities to count.
+     * @example
+     * // Count the number of UserActivities
+     * const count = await prisma.userActivity.count({
+     *   where: {
+     *     // ... the filter for the UserActivities we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserActivityCountArgs>(
+      args?: Subset<T, UserActivityCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserActivityCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserActivityAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserActivityAggregateArgs>(args: Subset<T, UserActivityAggregateArgs>): Prisma.PrismaPromise<GetUserActivityAggregateType<T>>
+
+    /**
+     * Group by UserActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserActivityGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserActivityGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserActivityGroupByArgs['orderBy'] }
+        : { orderBy?: UserActivityGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserActivityGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserActivityGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserActivity model
+   */
+  readonly fields: UserActivityFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserActivity.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserActivityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserActivity model
+   */
+  interface UserActivityFieldRefs {
+    readonly id: FieldRef<"UserActivity", 'String'>
+    readonly userId: FieldRef<"UserActivity", 'String'>
+    readonly action: FieldRef<"UserActivity", 'String'>
+    readonly resource: FieldRef<"UserActivity", 'String'>
+    readonly resourceId: FieldRef<"UserActivity", 'String'>
+    readonly metadata: FieldRef<"UserActivity", 'Json'>
+    readonly ipAddress: FieldRef<"UserActivity", 'String'>
+    readonly userAgent: FieldRef<"UserActivity", 'String'>
+    readonly createdAt: FieldRef<"UserActivity", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserActivity findUnique
+   */
+  export type UserActivityFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which UserActivity to fetch.
+     */
+    where: UserActivityWhereUniqueInput
+  }
+
+  /**
+   * UserActivity findUniqueOrThrow
+   */
+  export type UserActivityFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which UserActivity to fetch.
+     */
+    where: UserActivityWhereUniqueInput
+  }
+
+  /**
+   * UserActivity findFirst
+   */
+  export type UserActivityFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which UserActivity to fetch.
+     */
+    where?: UserActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserActivities to fetch.
+     */
+    orderBy?: UserActivityOrderByWithRelationInput | UserActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserActivities.
+     */
+    cursor?: UserActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserActivities.
+     */
+    distinct?: UserActivityScalarFieldEnum | UserActivityScalarFieldEnum[]
+  }
+
+  /**
+   * UserActivity findFirstOrThrow
+   */
+  export type UserActivityFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which UserActivity to fetch.
+     */
+    where?: UserActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserActivities to fetch.
+     */
+    orderBy?: UserActivityOrderByWithRelationInput | UserActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserActivities.
+     */
+    cursor?: UserActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserActivities.
+     */
+    distinct?: UserActivityScalarFieldEnum | UserActivityScalarFieldEnum[]
+  }
+
+  /**
+   * UserActivity findMany
+   */
+  export type UserActivityFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which UserActivities to fetch.
+     */
+    where?: UserActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserActivities to fetch.
+     */
+    orderBy?: UserActivityOrderByWithRelationInput | UserActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserActivities.
+     */
+    cursor?: UserActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserActivities.
+     */
+    distinct?: UserActivityScalarFieldEnum | UserActivityScalarFieldEnum[]
+  }
+
+  /**
+   * UserActivity create
+   */
+  export type UserActivityCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserActivity.
+     */
+    data: XOR<UserActivityCreateInput, UserActivityUncheckedCreateInput>
+  }
+
+  /**
+   * UserActivity createMany
+   */
+  export type UserActivityCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserActivities.
+     */
+    data: UserActivityCreateManyInput | UserActivityCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserActivity createManyAndReturn
+   */
+  export type UserActivityCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * The data used to create many UserActivities.
+     */
+    data: UserActivityCreateManyInput | UserActivityCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserActivity update
+   */
+  export type UserActivityUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserActivity.
+     */
+    data: XOR<UserActivityUpdateInput, UserActivityUncheckedUpdateInput>
+    /**
+     * Choose, which UserActivity to update.
+     */
+    where: UserActivityWhereUniqueInput
+  }
+
+  /**
+   * UserActivity updateMany
+   */
+  export type UserActivityUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserActivities.
+     */
+    data: XOR<UserActivityUpdateManyMutationInput, UserActivityUncheckedUpdateManyInput>
+    /**
+     * Filter which UserActivities to update
+     */
+    where?: UserActivityWhereInput
+    /**
+     * Limit how many UserActivities to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserActivity updateManyAndReturn
+   */
+  export type UserActivityUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * The data used to update UserActivities.
+     */
+    data: XOR<UserActivityUpdateManyMutationInput, UserActivityUncheckedUpdateManyInput>
+    /**
+     * Filter which UserActivities to update
+     */
+    where?: UserActivityWhereInput
+    /**
+     * Limit how many UserActivities to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserActivity upsert
+   */
+  export type UserActivityUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserActivity to update in case it exists.
+     */
+    where: UserActivityWhereUniqueInput
+    /**
+     * In case the UserActivity found by the `where` argument doesn't exist, create a new UserActivity with this data.
+     */
+    create: XOR<UserActivityCreateInput, UserActivityUncheckedCreateInput>
+    /**
+     * In case the UserActivity was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserActivityUpdateInput, UserActivityUncheckedUpdateInput>
+  }
+
+  /**
+   * UserActivity delete
+   */
+  export type UserActivityDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
+    /**
+     * Filter which UserActivity to delete.
+     */
+    where: UserActivityWhereUniqueInput
+  }
+
+  /**
+   * UserActivity deleteMany
+   */
+  export type UserActivityDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserActivities to delete
+     */
+    where?: UserActivityWhereInput
+    /**
+     * Limit how many UserActivities to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserActivity without action
+   */
+  export type UserActivityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserActivity
+     */
+    select?: UserActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserActivity
+     */
+    omit?: UserActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserActivityInclude<ExtArgs> | null
   }
 
 
@@ -3907,6 +5159,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     description: string | null
+    isSystem: boolean | null
     createAt: Date | null
   }
 
@@ -3914,6 +5167,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     description: string | null
+    isSystem: boolean | null
     createAt: Date | null
   }
 
@@ -3921,6 +5175,7 @@ export namespace Prisma {
     id: number
     name: number
     description: number
+    isSystem: number
     createAt: number
     _all: number
   }
@@ -3930,6 +5185,7 @@ export namespace Prisma {
     id?: true
     name?: true
     description?: true
+    isSystem?: true
     createAt?: true
   }
 
@@ -3937,6 +5193,7 @@ export namespace Prisma {
     id?: true
     name?: true
     description?: true
+    isSystem?: true
     createAt?: true
   }
 
@@ -3944,6 +5201,7 @@ export namespace Prisma {
     id?: true
     name?: true
     description?: true
+    isSystem?: true
     createAt?: true
     _all?: true
   }
@@ -4024,6 +5282,7 @@ export namespace Prisma {
     id: string
     name: string
     description: string | null
+    isSystem: boolean
     createAt: Date
     _count: RoleCountAggregateOutputType | null
     _min: RoleMinAggregateOutputType | null
@@ -4048,6 +5307,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     description?: boolean
+    isSystem?: boolean
     createAt?: boolean
     users?: boolean | Role$usersArgs<ExtArgs>
     permissions?: boolean | Role$permissionsArgs<ExtArgs>
@@ -4058,6 +5318,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     description?: boolean
+    isSystem?: boolean
     createAt?: boolean
   }, ExtArgs["result"]["role"]>
 
@@ -4065,6 +5326,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     description?: boolean
+    isSystem?: boolean
     createAt?: boolean
   }, ExtArgs["result"]["role"]>
 
@@ -4072,10 +5334,11 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     description?: boolean
+    isSystem?: boolean
     createAt?: boolean
   }
 
-  export type RoleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "createAt", ExtArgs["result"]["role"]>
+  export type RoleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "isSystem" | "createAt", ExtArgs["result"]["role"]>
   export type RoleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Role$usersArgs<ExtArgs>
     permissions?: boolean | Role$permissionsArgs<ExtArgs>
@@ -4094,6 +5357,7 @@ export namespace Prisma {
       id: string
       name: string
       description: string | null
+      isSystem: boolean
       createAt: Date
     }, ExtArgs["result"]["role"]>
     composites: {}
@@ -4523,6 +5787,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Role", 'String'>
     readonly name: FieldRef<"Role", 'String'>
     readonly description: FieldRef<"Role", 'String'>
+    readonly isSystem: FieldRef<"Role", 'Boolean'>
     readonly createAt: FieldRef<"Role", 'DateTime'>
   }
     
@@ -9132,6 +10397,7 @@ export namespace Prisma {
     phone: 'phone',
     isActive: 'isActive',
     isEmailVerified: 'isEmailVerified',
+    status: 'status',
     createAt: 'createAt',
     updateAt: 'updateAt',
     resetToken: 'resetToken',
@@ -9139,6 +10405,21 @@ export namespace Prisma {
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const UserActivityScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    action: 'action',
+    resource: 'resource',
+    resourceId: 'resourceId',
+    metadata: 'metadata',
+    ipAddress: 'ipAddress',
+    userAgent: 'userAgent',
+    createdAt: 'createdAt'
+  };
+
+  export type UserActivityScalarFieldEnum = (typeof UserActivityScalarFieldEnum)[keyof typeof UserActivityScalarFieldEnum]
 
 
   export const OTPScalarFieldEnum: {
@@ -9160,6 +10441,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     description: 'description',
+    isSystem: 'isSystem',
     createAt: 'createAt'
   };
 
@@ -9211,6 +10493,14 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -9225,6 +10515,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -9264,6 +10563,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -9310,12 +10623,14 @@ export namespace Prisma {
     phone?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     isEmailVerified?: BoolFilter<"User"> | boolean
+    status?: StringFilter<"User"> | string
     createAt?: DateTimeFilter<"User"> | Date | string
     updateAt?: DateTimeFilter<"User"> | Date | string
     resetToken?: StringNullableFilter<"User"> | string | null
     resetTokenExpires?: DateTimeNullableFilter<"User"> | Date | string | null
     roles?: UserRoleListRelationFilter
     opts?: OTPListRelationFilter
+    activities?: UserActivityListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9327,12 +10642,14 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     isActive?: SortOrder
     isEmailVerified?: SortOrder
+    status?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
     resetToken?: SortOrderInput | SortOrder
     resetTokenExpires?: SortOrderInput | SortOrder
     roles?: UserRoleOrderByRelationAggregateInput
     opts?: OTPOrderByRelationAggregateInput
+    activities?: UserActivityOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9348,11 +10665,13 @@ export namespace Prisma {
     phone?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     isEmailVerified?: BoolFilter<"User"> | boolean
+    status?: StringFilter<"User"> | string
     createAt?: DateTimeFilter<"User"> | Date | string
     updateAt?: DateTimeFilter<"User"> | Date | string
     resetTokenExpires?: DateTimeNullableFilter<"User"> | Date | string | null
     roles?: UserRoleListRelationFilter
     opts?: OTPListRelationFilter
+    activities?: UserActivityListRelationFilter
   }, "id" | "email" | "resetToken">
 
   export type UserOrderByWithAggregationInput = {
@@ -9364,6 +10683,7 @@ export namespace Prisma {
     phone?: SortOrderInput | SortOrder
     isActive?: SortOrder
     isEmailVerified?: SortOrder
+    status?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
     resetToken?: SortOrderInput | SortOrder
@@ -9385,10 +10705,86 @@ export namespace Prisma {
     phone?: StringNullableWithAggregatesFilter<"User"> | string | null
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     isEmailVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    status?: StringWithAggregatesFilter<"User"> | string
     createAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updateAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     resetToken?: StringNullableWithAggregatesFilter<"User"> | string | null
     resetTokenExpires?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  }
+
+  export type UserActivityWhereInput = {
+    AND?: UserActivityWhereInput | UserActivityWhereInput[]
+    OR?: UserActivityWhereInput[]
+    NOT?: UserActivityWhereInput | UserActivityWhereInput[]
+    id?: StringFilter<"UserActivity"> | string
+    userId?: StringFilter<"UserActivity"> | string
+    action?: StringFilter<"UserActivity"> | string
+    resource?: StringNullableFilter<"UserActivity"> | string | null
+    resourceId?: StringNullableFilter<"UserActivity"> | string | null
+    metadata?: JsonNullableFilter<"UserActivity">
+    ipAddress?: StringNullableFilter<"UserActivity"> | string | null
+    userAgent?: StringNullableFilter<"UserActivity"> | string | null
+    createdAt?: DateTimeFilter<"UserActivity"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type UserActivityOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    resource?: SortOrderInput | SortOrder
+    resourceId?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type UserActivityWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: UserActivityWhereInput | UserActivityWhereInput[]
+    OR?: UserActivityWhereInput[]
+    NOT?: UserActivityWhereInput | UserActivityWhereInput[]
+    userId?: StringFilter<"UserActivity"> | string
+    action?: StringFilter<"UserActivity"> | string
+    resource?: StringNullableFilter<"UserActivity"> | string | null
+    resourceId?: StringNullableFilter<"UserActivity"> | string | null
+    metadata?: JsonNullableFilter<"UserActivity">
+    ipAddress?: StringNullableFilter<"UserActivity"> | string | null
+    userAgent?: StringNullableFilter<"UserActivity"> | string | null
+    createdAt?: DateTimeFilter<"UserActivity"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type UserActivityOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    resource?: SortOrderInput | SortOrder
+    resourceId?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: UserActivityCountOrderByAggregateInput
+    _max?: UserActivityMaxOrderByAggregateInput
+    _min?: UserActivityMinOrderByAggregateInput
+  }
+
+  export type UserActivityScalarWhereWithAggregatesInput = {
+    AND?: UserActivityScalarWhereWithAggregatesInput | UserActivityScalarWhereWithAggregatesInput[]
+    OR?: UserActivityScalarWhereWithAggregatesInput[]
+    NOT?: UserActivityScalarWhereWithAggregatesInput | UserActivityScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UserActivity"> | string
+    userId?: StringWithAggregatesFilter<"UserActivity"> | string
+    action?: StringWithAggregatesFilter<"UserActivity"> | string
+    resource?: StringNullableWithAggregatesFilter<"UserActivity"> | string | null
+    resourceId?: StringNullableWithAggregatesFilter<"UserActivity"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"UserActivity">
+    ipAddress?: StringNullableWithAggregatesFilter<"UserActivity"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"UserActivity"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"UserActivity"> | Date | string
   }
 
   export type OTPWhereInput = {
@@ -9476,6 +10872,7 @@ export namespace Prisma {
     id?: StringFilter<"Role"> | string
     name?: StringFilter<"Role"> | string
     description?: StringNullableFilter<"Role"> | string | null
+    isSystem?: BoolFilter<"Role"> | boolean
     createAt?: DateTimeFilter<"Role"> | Date | string
     users?: UserRoleListRelationFilter
     permissions?: RolePermissionListRelationFilter
@@ -9485,6 +10882,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrderInput | SortOrder
+    isSystem?: SortOrder
     createAt?: SortOrder
     users?: UserRoleOrderByRelationAggregateInput
     permissions?: RolePermissionOrderByRelationAggregateInput
@@ -9497,6 +10895,7 @@ export namespace Prisma {
     OR?: RoleWhereInput[]
     NOT?: RoleWhereInput | RoleWhereInput[]
     description?: StringNullableFilter<"Role"> | string | null
+    isSystem?: BoolFilter<"Role"> | boolean
     createAt?: DateTimeFilter<"Role"> | Date | string
     users?: UserRoleListRelationFilter
     permissions?: RolePermissionListRelationFilter
@@ -9506,6 +10905,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrderInput | SortOrder
+    isSystem?: SortOrder
     createAt?: SortOrder
     _count?: RoleCountOrderByAggregateInput
     _max?: RoleMaxOrderByAggregateInput
@@ -9519,6 +10919,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Role"> | string
     name?: StringWithAggregatesFilter<"Role"> | string
     description?: StringNullableWithAggregatesFilter<"Role"> | string | null
+    isSystem?: BoolWithAggregatesFilter<"Role"> | boolean
     createAt?: DateTimeWithAggregatesFilter<"Role"> | Date | string
   }
 
@@ -9722,12 +11123,14 @@ export namespace Prisma {
     phone?: string | null
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: string
     createAt?: Date | string
     updateAt?: Date | string
     resetToken?: string | null
     resetTokenExpires?: Date | string | null
     roles?: UserRoleCreateNestedManyWithoutUserInput
     opts?: OTPCreateNestedManyWithoutUserInput
+    activities?: UserActivityCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -9739,12 +11142,14 @@ export namespace Prisma {
     phone?: string | null
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: string
     createAt?: Date | string
     updateAt?: Date | string
     resetToken?: string | null
     resetTokenExpires?: Date | string | null
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
     opts?: OTPUncheckedCreateNestedManyWithoutUserInput
+    activities?: UserActivityUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -9756,12 +11161,14 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUpdateManyWithoutUserNestedInput
     opts?: OTPUpdateManyWithoutUserNestedInput
+    activities?: UserActivityUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -9773,12 +11180,14 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
     opts?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    activities?: UserActivityUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -9790,6 +11199,7 @@ export namespace Prisma {
     phone?: string | null
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: string
     createAt?: Date | string
     updateAt?: Date | string
     resetToken?: string | null
@@ -9805,6 +11215,7 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -9820,10 +11231,94 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type UserActivityCreateInput = {
+    id?: string
+    action: string
+    resource?: string | null
+    resourceId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutActivitiesInput
+  }
+
+  export type UserActivityUncheckedCreateInput = {
+    id?: string
+    userId: string
+    action: string
+    resource?: string | null
+    resourceId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type UserActivityUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutActivitiesNestedInput
+  }
+
+  export type UserActivityUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserActivityCreateManyInput = {
+    id?: string
+    userId: string
+    action: string
+    resource?: string | null
+    resourceId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type UserActivityUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserActivityUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OTPCreateInput = {
@@ -9913,6 +11408,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
+    isSystem?: boolean
     createAt?: Date | string
     users?: UserRoleCreateNestedManyWithoutRoleInput
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
@@ -9922,6 +11418,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
+    isSystem?: boolean
     createAt?: Date | string
     users?: UserRoleUncheckedCreateNestedManyWithoutRoleInput
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
@@ -9931,6 +11428,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserRoleUpdateManyWithoutRoleNestedInput
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
@@ -9940,6 +11438,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserRoleUncheckedUpdateManyWithoutRoleNestedInput
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
@@ -9949,6 +11448,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
+    isSystem?: boolean
     createAt?: Date | string
   }
 
@@ -9956,6 +11456,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -9963,6 +11464,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10212,6 +11714,12 @@ export namespace Prisma {
     none?: OTPWhereInput
   }
 
+  export type UserActivityListRelationFilter = {
+    every?: UserActivityWhereInput
+    some?: UserActivityWhereInput
+    none?: UserActivityWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -10225,6 +11733,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type UserActivityOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
@@ -10234,6 +11746,7 @@ export namespace Prisma {
     phone?: SortOrder
     isActive?: SortOrder
     isEmailVerified?: SortOrder
+    status?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
     resetToken?: SortOrder
@@ -10249,6 +11762,7 @@ export namespace Prisma {
     phone?: SortOrder
     isActive?: SortOrder
     isEmailVerified?: SortOrder
+    status?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
     resetToken?: SortOrder
@@ -10264,6 +11778,7 @@ export namespace Prisma {
     phone?: SortOrder
     isActive?: SortOrder
     isEmailVerified?: SortOrder
+    status?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
     resetToken?: SortOrder
@@ -10341,6 +11856,94 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type UserActivityCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    resource?: SortOrder
+    resourceId?: SortOrder
+    metadata?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserActivityMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    resource?: SortOrder
+    resourceId?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserActivityMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    action?: SortOrder
+    resource?: SortOrder
+    resourceId?: SortOrder
+    ipAddress?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
 
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
@@ -10351,11 +11954,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
   }
 
   export type OTPEmailTypeCompoundUniqueInput = {
@@ -10437,6 +12035,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrder
+    isSystem?: SortOrder
     createAt?: SortOrder
   }
 
@@ -10444,6 +12043,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrder
+    isSystem?: SortOrder
     createAt?: SortOrder
   }
 
@@ -10451,6 +12051,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     description?: SortOrder
+    isSystem?: SortOrder
     createAt?: SortOrder
   }
 
@@ -10568,6 +12169,13 @@ export namespace Prisma {
     connect?: OTPWhereUniqueInput | OTPWhereUniqueInput[]
   }
 
+  export type UserActivityCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserActivityCreateWithoutUserInput, UserActivityUncheckedCreateWithoutUserInput> | UserActivityCreateWithoutUserInput[] | UserActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserActivityCreateOrConnectWithoutUserInput | UserActivityCreateOrConnectWithoutUserInput[]
+    createMany?: UserActivityCreateManyUserInputEnvelope
+    connect?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+  }
+
   export type UserRoleUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -10580,6 +12188,13 @@ export namespace Prisma {
     connectOrCreate?: OTPCreateOrConnectWithoutUserInput | OTPCreateOrConnectWithoutUserInput[]
     createMany?: OTPCreateManyUserInputEnvelope
     connect?: OTPWhereUniqueInput | OTPWhereUniqueInput[]
+  }
+
+  export type UserActivityUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserActivityCreateWithoutUserInput, UserActivityUncheckedCreateWithoutUserInput> | UserActivityCreateWithoutUserInput[] | UserActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserActivityCreateOrConnectWithoutUserInput | UserActivityCreateOrConnectWithoutUserInput[]
+    createMany?: UserActivityCreateManyUserInputEnvelope
+    connect?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10630,6 +12245,20 @@ export namespace Prisma {
     deleteMany?: OTPScalarWhereInput | OTPScalarWhereInput[]
   }
 
+  export type UserActivityUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserActivityCreateWithoutUserInput, UserActivityUncheckedCreateWithoutUserInput> | UserActivityCreateWithoutUserInput[] | UserActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserActivityCreateOrConnectWithoutUserInput | UserActivityCreateOrConnectWithoutUserInput[]
+    upsert?: UserActivityUpsertWithWhereUniqueWithoutUserInput | UserActivityUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserActivityCreateManyUserInputEnvelope
+    set?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    disconnect?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    delete?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    connect?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    update?: UserActivityUpdateWithWhereUniqueWithoutUserInput | UserActivityUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserActivityUpdateManyWithWhereWithoutUserInput | UserActivityUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserActivityScalarWhereInput | UserActivityScalarWhereInput[]
+  }
+
   export type UserRoleUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserRoleCreateWithoutUserInput, UserRoleUncheckedCreateWithoutUserInput> | UserRoleCreateWithoutUserInput[] | UserRoleUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserRoleCreateOrConnectWithoutUserInput | UserRoleCreateOrConnectWithoutUserInput[]
@@ -10656,6 +12285,34 @@ export namespace Prisma {
     update?: OTPUpdateWithWhereUniqueWithoutUserInput | OTPUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: OTPUpdateManyWithWhereWithoutUserInput | OTPUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: OTPScalarWhereInput | OTPScalarWhereInput[]
+  }
+
+  export type UserActivityUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserActivityCreateWithoutUserInput, UserActivityUncheckedCreateWithoutUserInput> | UserActivityCreateWithoutUserInput[] | UserActivityUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserActivityCreateOrConnectWithoutUserInput | UserActivityCreateOrConnectWithoutUserInput[]
+    upsert?: UserActivityUpsertWithWhereUniqueWithoutUserInput | UserActivityUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserActivityCreateManyUserInputEnvelope
+    set?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    disconnect?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    delete?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    connect?: UserActivityWhereUniqueInput | UserActivityWhereUniqueInput[]
+    update?: UserActivityUpdateWithWhereUniqueWithoutUserInput | UserActivityUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserActivityUpdateManyWithWhereWithoutUserInput | UserActivityUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserActivityScalarWhereInput | UserActivityScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutActivitiesInput = {
+    create?: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutActivitiesNestedInput = {
+    create?: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutActivitiesInput
+    upsert?: UserUpsertWithoutActivitiesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActivitiesInput, UserUpdateWithoutActivitiesInput>, UserUncheckedUpdateWithoutActivitiesInput>
   }
 
   export type UserCreateNestedOneWithoutOptsInput = {
@@ -11008,6 +12665,29 @@ export namespace Prisma {
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
@@ -11086,6 +12766,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserActivityCreateWithoutUserInput = {
+    id?: string
+    action: string
+    resource?: string | null
+    resourceId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type UserActivityUncheckedCreateWithoutUserInput = {
+    id?: string
+    action: string
+    resource?: string | null
+    resourceId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+  }
+
+  export type UserActivityCreateOrConnectWithoutUserInput = {
+    where: UserActivityWhereUniqueInput
+    create: XOR<UserActivityCreateWithoutUserInput, UserActivityUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserActivityCreateManyUserInputEnvelope = {
+    data: UserActivityCreateManyUserInput | UserActivityCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserRoleUpsertWithWhereUniqueWithoutUserInput = {
     where: UserRoleWhereUniqueInput
     update: XOR<UserRoleUpdateWithoutUserInput, UserRoleUncheckedUpdateWithoutUserInput>
@@ -11141,6 +12853,125 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"OTP"> | Date | string
   }
 
+  export type UserActivityUpsertWithWhereUniqueWithoutUserInput = {
+    where: UserActivityWhereUniqueInput
+    update: XOR<UserActivityUpdateWithoutUserInput, UserActivityUncheckedUpdateWithoutUserInput>
+    create: XOR<UserActivityCreateWithoutUserInput, UserActivityUncheckedCreateWithoutUserInput>
+  }
+
+  export type UserActivityUpdateWithWhereUniqueWithoutUserInput = {
+    where: UserActivityWhereUniqueInput
+    data: XOR<UserActivityUpdateWithoutUserInput, UserActivityUncheckedUpdateWithoutUserInput>
+  }
+
+  export type UserActivityUpdateManyWithWhereWithoutUserInput = {
+    where: UserActivityScalarWhereInput
+    data: XOR<UserActivityUpdateManyMutationInput, UserActivityUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserActivityScalarWhereInput = {
+    AND?: UserActivityScalarWhereInput | UserActivityScalarWhereInput[]
+    OR?: UserActivityScalarWhereInput[]
+    NOT?: UserActivityScalarWhereInput | UserActivityScalarWhereInput[]
+    id?: StringFilter<"UserActivity"> | string
+    userId?: StringFilter<"UserActivity"> | string
+    action?: StringFilter<"UserActivity"> | string
+    resource?: StringNullableFilter<"UserActivity"> | string | null
+    resourceId?: StringNullableFilter<"UserActivity"> | string | null
+    metadata?: JsonNullableFilter<"UserActivity">
+    ipAddress?: StringNullableFilter<"UserActivity"> | string | null
+    userAgent?: StringNullableFilter<"UserActivity"> | string | null
+    createdAt?: DateTimeFilter<"UserActivity"> | Date | string
+  }
+
+  export type UserCreateWithoutActivitiesInput = {
+    id?: string
+    email: string
+    password: string
+    firstname: string
+    lastName: string
+    phone?: string | null
+    isActive?: boolean
+    isEmailVerified?: boolean
+    status?: string
+    createAt?: Date | string
+    updateAt?: Date | string
+    resetToken?: string | null
+    resetTokenExpires?: Date | string | null
+    roles?: UserRoleCreateNestedManyWithoutUserInput
+    opts?: OTPCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutActivitiesInput = {
+    id?: string
+    email: string
+    password: string
+    firstname: string
+    lastName: string
+    phone?: string | null
+    isActive?: boolean
+    isEmailVerified?: boolean
+    status?: string
+    createAt?: Date | string
+    updateAt?: Date | string
+    resetToken?: string | null
+    resetTokenExpires?: Date | string | null
+    roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    opts?: OTPUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutActivitiesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+  }
+
+  export type UserUpsertWithoutActivitiesInput = {
+    update: XOR<UserUpdateWithoutActivitiesInput, UserUncheckedUpdateWithoutActivitiesInput>
+    create: XOR<UserCreateWithoutActivitiesInput, UserUncheckedCreateWithoutActivitiesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutActivitiesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutActivitiesInput, UserUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type UserUpdateWithoutActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
+    createAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    roles?: UserRoleUpdateManyWithoutUserNestedInput
+    opts?: OTPUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    firstname?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
+    createAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    opts?: OTPUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutOptsInput = {
     id?: string
     email: string
@@ -11150,11 +12981,13 @@ export namespace Prisma {
     phone?: string | null
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: string
     createAt?: Date | string
     updateAt?: Date | string
     resetToken?: string | null
     resetTokenExpires?: Date | string | null
     roles?: UserRoleCreateNestedManyWithoutUserInput
+    activities?: UserActivityCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOptsInput = {
@@ -11166,11 +12999,13 @@ export namespace Prisma {
     phone?: string | null
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: string
     createAt?: Date | string
     updateAt?: Date | string
     resetToken?: string | null
     resetTokenExpires?: Date | string | null
     roles?: UserRoleUncheckedCreateNestedManyWithoutUserInput
+    activities?: UserActivityUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOptsInput = {
@@ -11198,11 +13033,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUpdateManyWithoutUserNestedInput
+    activities?: UserActivityUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOptsInput = {
@@ -11214,11 +13051,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     roles?: UserRoleUncheckedUpdateManyWithoutUserNestedInput
+    activities?: UserActivityUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserRoleCreateWithoutRoleInput = {
@@ -11340,11 +13179,13 @@ export namespace Prisma {
     phone?: string | null
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: string
     createAt?: Date | string
     updateAt?: Date | string
     resetToken?: string | null
     resetTokenExpires?: Date | string | null
     opts?: OTPCreateNestedManyWithoutUserInput
+    activities?: UserActivityCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRolesInput = {
@@ -11356,11 +13197,13 @@ export namespace Prisma {
     phone?: string | null
     isActive?: boolean
     isEmailVerified?: boolean
+    status?: string
     createAt?: Date | string
     updateAt?: Date | string
     resetToken?: string | null
     resetTokenExpires?: Date | string | null
     opts?: OTPUncheckedCreateNestedManyWithoutUserInput
+    activities?: UserActivityUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRolesInput = {
@@ -11372,6 +13215,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
+    isSystem?: boolean
     createAt?: Date | string
     permissions?: RolePermissionCreateNestedManyWithoutRoleInput
   }
@@ -11380,6 +13224,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
+    isSystem?: boolean
     createAt?: Date | string
     permissions?: RolePermissionUncheckedCreateNestedManyWithoutRoleInput
   }
@@ -11409,11 +13254,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opts?: OTPUpdateManyWithoutUserNestedInput
+    activities?: UserActivityUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRolesInput = {
@@ -11425,11 +13272,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    status?: StringFieldUpdateOperationsInput | string
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resetToken?: NullableStringFieldUpdateOperationsInput | string | null
     resetTokenExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     opts?: OTPUncheckedUpdateManyWithoutUserNestedInput
+    activities?: UserActivityUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RoleUpsertWithoutUsersInput = {
@@ -11447,6 +13296,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     permissions?: RolePermissionUpdateManyWithoutRoleNestedInput
   }
@@ -11455,6 +13305,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     permissions?: RolePermissionUncheckedUpdateManyWithoutRoleNestedInput
   }
@@ -11463,6 +13314,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
+    isSystem?: boolean
     createAt?: Date | string
     users?: UserRoleCreateNestedManyWithoutRoleInput
   }
@@ -11471,6 +13323,7 @@ export namespace Prisma {
     id?: string
     name: string
     description?: string | null
+    isSystem?: boolean
     createAt?: Date | string
     users?: UserRoleUncheckedCreateNestedManyWithoutRoleInput
   }
@@ -11512,6 +13365,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserRoleUpdateManyWithoutRoleNestedInput
   }
@@ -11520,6 +13374,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     users?: UserRoleUncheckedUpdateManyWithoutRoleNestedInput
   }
@@ -11559,6 +13414,17 @@ export namespace Prisma {
     expiresAt: Date | string
     used?: boolean
     attempts?: number
+    createdAt?: Date | string
+  }
+
+  export type UserActivityCreateManyUserInput = {
+    id?: string
+    action: string
+    resource?: string | null
+    resourceId?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: string | null
+    userAgent?: string | null
     createdAt?: Date | string
   }
 
@@ -11604,6 +13470,39 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     used?: BoolFieldUpdateOperationsInput | boolean
     attempts?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserActivityUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserActivityUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserActivityUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    resourceId?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

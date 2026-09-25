@@ -38,8 +38,8 @@ export class ProductsController {
     }
 
     @MessagePattern('product.update')
-    async updateProduct(@Payload() data: { id: string; dto: UpdateProductDto }) {
-        return this.productService.updateProduct(data.id, data.dto);
+    async updateProduct(@Payload() data: { id: string; dto: UpdateProductDto; actor?: string }) {
+        return this.productService.updateProduct(data.id, data.dto, data.actor);
     }
 
     @MessagePattern('product.delete')
@@ -59,6 +59,26 @@ export class ProductsController {
     @MessagePattern('product.inventory.check')
     async checkInventory(@Payload() data: { productId: string; quantity: number }) {
         return this.productService.checkInventory(data.productId, data.quantity);
+    }
+
+    @MessagePattern('inventory.order.commit')
+    async commitOrderStock(@Payload() data: { orderId: string; items: { productId: string; quantity: number }[] }) {
+        return this.productService.commitOrderStock(data.orderId, data.items);
+    }
+
+    @MessagePattern('inventory.order.release')
+    async releaseOrderStock(@Payload() data: { orderId: string; reason?: 'ORDER_CANCELLED' | 'ORDER_FAILED' }) {
+        return this.productService.releaseOrderStock(data.orderId, data.reason);
+    }
+
+    @MessagePattern('inventory.return.restock')
+    async restockReturn(@Payload() data: { returnId: string; items: { productId: string; quantity: number }[] }) {
+        return this.productService.restockReturn(data.returnId, data.items);
+    }
+
+    @MessagePattern('inventory.movements')
+    async getStockMovements(@Payload() data: { productId: string; limit?: number }) {
+        return this.productService.getStockMovements(data.productId, data.limit);
     }
 
     @MessagePattern('product.inventory.reserve')
@@ -160,28 +180,76 @@ export class ProductsController {
     // WISHLIST (Favourites)
     // ============================================
 
-    // @MessagePattern('wishlist.create')
-    // async createWishlist(@Payload() data: { userId: string; name?: string }) {
-    //     return this.productService.createWishlist(data.userId, data.name);
-    // }
+    @MessagePattern('wishlist.get')
+    async getWishlist(@Payload() data: { userId: string }) {
+        return this.productService.getWishlist(data.userId);
+    }
 
-    // @MessagePattern('wishlist.find')
-    // async findWishlists(@Payload() data: { userId: string }) {
-    //     return this.productService.findWishlists(data.userId);
-    // }
+    @MessagePattern('wishlist.add')
+    async addToWishlist(@Payload() data: { userId: string; productId: string }) {
+        return this.productService.addToWishlist(data.userId, data.productId);
+    }
 
-    // @MessagePattern('wishlist.add.item')
-    // async addToWishlist(@Payload() data: { userId: string; productId: string; variantId?: string }) {
-    //     return this.productService.addToWishlist(data.userId, data.productId, data.variantId);
-    // }
+    @MessagePattern('wishlist.remove')
+    async removeFromWishlist(@Payload() data: { userId: string; productId: string }) {
+        return this.productService.removeFromWishlist(data.userId, data.productId);
+    }
 
-    // @MessagePattern('wishlist.remove.item')
-    // async removeFromWishlist(@Payload() data: { userId: string; productId: string }) {
-    //     return this.productService.removeFromWishlist(data.userId, data.productId);
-    // }
+    @MessagePattern('wishlist.clear')
+    async clearWishlist(@Payload() data: { userId: string }) {
+        return this.productService.clearWishlist(data.userId);
+    }
 
-    // @MessagePattern('wishlist.clear')
-    // async clearWishlist(@Payload() data: { userId: string }) {
-    //     return this.productService.clearWishlist(data.userId);
-    // }
+    // ============================================
+    // CART
+    // ============================================
+
+    @MessagePattern('cart.get')
+    async getCart(@Payload() data: { userId: string }) {
+        return this.productService.getCart(data.userId);
+    }
+
+    @MessagePattern('cart.replace')
+    async replaceCart(@Payload() data: { userId: string; items: { productId: string; quantity: number }[] }) {
+        return this.productService.replaceCart(data.userId, data.items);
+    }
+
+    @MessagePattern('cart.clear')
+    async clearCart(@Payload() data: { userId: string }) {
+        return this.productService.clearCart(data.userId);
+    }
+
+    // ============================================
+    // FLASH SALE
+    // ============================================
+
+    @MessagePattern('flashsale.public.get')
+    async getPublicFlashSale() {
+        return this.productService.getPublicFlashSale();
+    }
+
+    @MessagePattern('flashsale.admin.get')
+    async getFlashSaleAdmin() {
+        return this.productService.getFlashSaleAdmin();
+    }
+
+    @MessagePattern('flashsale.config.update')
+    async updateFlashSale(@Payload() data: { isActive?: boolean; title?: string; endsAt?: string | null }) {
+        return this.productService.updateFlashSale(data);
+    }
+
+    @MessagePattern('flashsale.items.set')
+    async setFlashSaleItems(@Payload() data: { productIds: string[] }) {
+        return this.productService.setFlashSaleItems(data.productIds || []);
+    }
+
+    @MessagePattern('flashsale.item.add')
+    async addFlashSaleItem(@Payload() data: { productId: string; salePrice?: number }) {
+        return this.productService.addFlashSaleItem(data.productId, data.salePrice);
+    }
+
+    @MessagePattern('flashsale.item.remove')
+    async removeFlashSaleItem(@Payload() data: { productId: string }) {
+        return this.productService.removeFlashSaleItem(data.productId);
+    }
 }

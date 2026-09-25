@@ -238,6 +238,35 @@ exports.Prisma.CustomerSegmentAssignmentScalarFieldEnum = {
   assignedAt: 'assignedAt'
 };
 
+exports.Prisma.SupportMessageScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  subject: 'subject',
+  body: 'body',
+  status: 'status',
+  priority: 'priority',
+  orderId: 'orderId',
+  orderNumber: 'orderNumber',
+  assignedTo: 'assignedTo',
+  assignedToName: 'assignedToName',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SupportMessageReplyScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  body: 'body',
+  authorId: 'authorId',
+  authorName: 'authorName',
+  isInternal: 'isInternal',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -277,7 +306,9 @@ exports.Prisma.ModelName = {
   CustomerNote: 'CustomerNote',
   CustomerActivity: 'CustomerActivity',
   CustomerSegment: 'CustomerSegment',
-  CustomerSegmentAssignment: 'CustomerSegmentAssignment'
+  CustomerSegmentAssignment: 'CustomerSegmentAssignment',
+  SupportMessage: 'SupportMessage',
+  SupportMessageReply: 'SupportMessageReply'
 };
 
 /**

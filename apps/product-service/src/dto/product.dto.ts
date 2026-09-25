@@ -14,6 +14,8 @@ import {
     MaxLength,
     IsEnum,
     ValidateNested,
+    IsInt,
+    ArrayMaxSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
@@ -87,6 +89,41 @@ export class ProductAttributeDto {
     @IsOptional()
     @Type(() => Number)
     displayOrder?: number;
+}
+
+/** One vehicle a part fits. Years are inclusive; leave empty for open-ended. */
+export class ProductFitmentDto {
+    @IsString() @MinLength(1) @MaxLength(40)
+    make: string;
+
+    @IsString() @MinLength(1) @MaxLength(60)
+    model: string;
+
+    @IsInt() @Min(1950) @Max(2100) @IsOptional() @Type(() => Number)
+    yearFrom?: number;
+
+    @IsInt() @Min(1950) @Max(2100) @IsOptional() @Type(() => Number)
+    yearTo?: number;
+
+    @IsString() @IsOptional() @MaxLength(60)
+    engine?: string;
+
+    @IsString() @IsOptional() @MaxLength(120)
+    notes?: string;
+}
+
+export const PART_NUMBER_TYPES = ['OE', 'MANUFACTURER', 'AFTERMARKET'] as const;
+
+/** An OE / manufacturer / aftermarket number this part is sold under or replaces. */
+export class ProductPartNumberDto {
+    @IsString() @MinLength(2) @MaxLength(60)
+    number: string;
+
+    @IsEnum(PART_NUMBER_TYPES) @IsOptional()
+    type?: (typeof PART_NUMBER_TYPES)[number];
+
+    @IsString() @IsOptional() @MaxLength(40)
+    brand?: string;
 }
 
 export class CreateProductDto {
@@ -180,6 +217,27 @@ export class CreateProductDto {
     @IsOptional()
     compatibility?: string;
 
+    /** Structured fitment — replaces the product's whole list when provided. */
+    @IsArray()
+    @IsOptional()
+    @ArrayMaxSize(200)
+    @ValidateNested({ each: true })
+    @Type(() => ProductFitmentDto)
+    fitments?: ProductFitmentDto[];
+
+    /** Fits any vehicle (oil, bulbs, tools…). */
+    @IsBoolean()
+    @IsOptional()
+    isUniversal?: boolean;
+
+    /** Cross-reference numbers — replaces the product's whole list when provided. */
+    @IsArray()
+    @IsOptional()
+    @ArrayMaxSize(100)
+    @ValidateNested({ each: true })
+    @Type(() => ProductPartNumberDto)
+    partNumbers?: ProductPartNumberDto[];
+
     @IsArray({ message: 'tags must be an array' })
     @IsOptional()
     tags?: string[];
@@ -244,13 +302,23 @@ export class ProductQueryDto {
 
     @IsString({ message: 'sortBy must be a string' })
     @IsOptional()
-    @IsEnum(['price', 'name', 'createdAt', 'popularity', 'rating'])
-    sortBy?: 'price' | 'name' | 'createdAt' | 'popularity' | 'rating';
+    @IsEnum(['price', 'name', 'createdAt', 'popularity', 'rating', 'stock'])
+    sortBy?: 'price' | 'name' | 'createdAt' | 'popularity' | 'rating' | 'stock';
 
     @IsString({ message: 'sortOrder must be a string' })
     @IsOptional()
     @IsEnum(['asc', 'desc'])
     sortOrder?: 'asc' | 'desc';
+
+    // vehicle finder: parts that fit this make/model(/year), plus universal parts
+    @IsString() @IsOptional() @MaxLength(40)
+    make?: string;
+
+    @IsString() @IsOptional() @MaxLength(60)
+    model?: string;
+
+    @IsInt() @IsOptional() @Min(1950) @Max(2100) @Type(() => Number)
+    year?: number;
 
     @IsNumber({}, { message: 'page must be a number' })
     @IsOptional()

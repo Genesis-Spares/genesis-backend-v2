@@ -13,7 +13,7 @@ model Customer {
   userId String @unique @map("user_id") // Reference to auth User (no FK)
 
   // Denormalized from Auth Service (synced via events)
-  email     String
+  email     String  @unique
   firstName String  @map("first_name")
   lastName  String  @map("last_name")
   phone     String?
@@ -210,4 +210,62 @@ model CustomerSegmentAssignment {
   @@index([customerId])
   @@index([segmentId])
   @@map("customer_segment_assignments")
+}
+
+// A customer/support inbox — "check on messages" on the admin dashboard.
+// Deliberately not tied to a required Customer relation: a message can come
+// from a guest via a public contact form (no account yet), so contact
+// details are captured directly on the message, the same way Order snapshots
+// customerName/customerEmail/customerPhone rather than requiring the FK.
+model SupportMessage {
+  id String @id @default(uuid())
+
+  customerId    String? @map("customer_id") // set when the sender is a known/logged-in customer
+  customerName  String  @map("customer_name")
+  customerEmail String  @map("customer_email")
+  customerPhone String? @map("customer_phone")
+
+  subject String
+  body    String
+
+  status   String @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  priority String @default("NORMAL") // LOW, NORMAL, HIGH, URGENT
+
+  // Optional link to the order this message is about
+  orderId     String? @map("order_id")
+  orderNumber String? @map("order_number")
+
+  assignedTo     String? @map("assigned_to") // staff userId currently handling this
+  assignedToName String? @map("assigned_to_name") // display label (staff email) for assignedTo
+
+  replies SupportMessageReply[]
+
+  resolvedAt DateTime? @map("resolved_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([priority])
+  @@index([customerId])
+  @@index([assignedTo])
+  @@index([createdAt])
+  @@map("support_messages")
+}
+
+model SupportMessageReply {
+  id        String @id @default(uuid())
+  messageId String @map("message_id")
+
+  body       String
+  authorId   String  @map("author_id") // staff userId who wrote the reply
+  authorName String? @map("author_name") // display label (staff email), set server-side from the JWT
+  isInternal Boolean @default(false) @map("is_internal") // internal note vs. a reply sent to the customer
+
+  message SupportMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([messageId])
+  @@map("support_message_replies")
 }

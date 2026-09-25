@@ -8,9 +8,15 @@ import { AuthTokens, JwtPayload } from '../dto/JwtPayload.type';
 import * as crypto from 'crypto';
 import { LoginDto } from '../dto/Login.dtio';
 import { OTPService } from './otp.service';
+import { ActivityLogService } from './activity-log.service';
 
 const ACCESS_TOKEN_TTL = '15m';
 const REFRESH_TOKEN_TTL_DAYS = 30;
+
+export interface RequestMeta {
+    ipAddress?: string;
+    userAgent?: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -18,6 +24,7 @@ export class AuthService {
         private readonly prisma: PrismaService,
         private readonly jwtService: JwtService,
         private readonly otpService: OTPService,
+        private readonly activityLog: ActivityLogService,
         @Inject('NOTIFICATION_SERVICE') private readonly notificationClient: ClientProxy,
         @Inject('CUSTOMER_SERVICE') private readonly customerClient: ClientProxy,
     ) { }
@@ -70,6 +77,13 @@ export class AuthService {
             userId: user.id,
             email: user.email,
             firstName: user.firstname
+        });
+
+        await this.activityLog.log({
+            userId: user.id,
+            action: 'USER_REGISTERED',
+            resource: 'user',
+            resourceId: user.id,
         });
 
         return {
@@ -128,6 +142,13 @@ export class AuthService {
             console.log(`📧 Customer creation event emitted for user: ${user.email}`);
         }
 
+        await this.activityLog.log({
+            userId: user.id,
+            action: 'EMAIL_VERIFIED',
+            resource: 'user',
+            resourceId: user.id,
+        });
+
         // ✅ Now issue tokens since email is verified
         const tokens = await this.issueTokens(user.id);
 
@@ -179,7 +200,7 @@ export class AuthService {
     }
 
 
-    async login(dto: LoginDto): Promise<AuthTokens> {
+    async login(dto: LoginDto, meta?: RequestMeta): Promise<AuthTokens> {
         const user = await this.prisma.user.findUnique({
             where: { email: dto.email },
         });
@@ -191,6 +212,31 @@ export class AuthService {
             });
         }
 
+        // Invited users go through the invite link, not the OTP flow — the
+        // invite-only accounts created by user-management.service.ts still
+        // land here with isEmailVerified false, but sending them a REGISTER
+        // OTP would be the wrong email.
+        if (!user.isEmailVerified && user.status === 'PENDING' && (await this.hasPendingInvite(user.email))) {
+            throw new RpcException({
+                statusCode: 403,
+                message: 'Your account is awaiting email verification. Check your inbox for the invitation link, or ask an admin to resend it.',
+                error: 'Forbidden',
+            });
+        }
+
+        // Check the password BEFORE the unverified branch, so an email address
+        // alone can't trigger OTP emails or reveal that an unverified account exists.
+        const passwordValid = await bcrypt.compare(dto.password, user.password);
+        if (!passwordValid) {
+            throw new RpcException({
+                statusCode: 401,
+                message: 'Invalid credentials',
+                error: 'Unauthorized',
+            });
+        }
+
+        // Self-registered but never verified: send a fresh code. The storefront
+        // keys off error === 'EMAIL_NOT_VERIFIED' to open its OTP screen.
         if (!user.isEmailVerified) {
             await this.otpService.generateAndSendOTP({
                 email: user.email,
@@ -202,6 +248,14 @@ export class AuthService {
             throw new RpcException({
                 statusCode: 403,
                 message: 'Email not verified. A new OTP has been sent to your email.',
+                error: 'EMAIL_NOT_VERIFIED',
+            });
+        }
+
+        if (user.status === 'SUSPENDED') {
+            throw new RpcException({
+                statusCode: 403,
+                message: 'Account is suspended. Contact an administrator.',
                 error: 'Forbidden',
             });
         }
@@ -214,16 +268,72 @@ export class AuthService {
             });
         }
 
-        const passwordValid = await bcrypt.compare(dto.password, user.password);
-        if (!passwordValid) {
-            throw new RpcException({
-                statusCode: 401,
-                message: 'Invalid credentials',
-                error: 'Unauthorized',
-            });
 
-        }
+        await this.activityLog.log({
+            userId: user.id,
+            action: 'USER_LOGIN',
+            resource: 'user',
+            resourceId: user.id,
+            ipAddress: meta?.ipAddress,
+            userAgent: meta?.userAgent,
+        });
+
         return this.issueTokens(user.id)
+    }
+
+    /** True if this email has an unused, unexpired INVITE token outstanding. */
+    private async hasPendingInvite(email: string): Promise<boolean> {
+        const invite = await this.prisma.oTP.findFirst({
+            where: { email, type: 'INVITE', used: false, expiresAt: { gt: new Date() } },
+        });
+        return Boolean(invite);
+    }
+
+    /**
+     * Accepting an admin-sent invitation: verifies the link token, marks the
+     * user active/verified, and — matching verifyEmail's UX — logs them
+     * straight in rather than making them visit /login separately.
+     */
+    async verifyInvite(token: string, meta?: RequestMeta): Promise<AuthTokens & { user: { id: string; email: string; firstName: string; lastName: string } }> {
+        const { valid, userId } = await this.otpService.verifyInviteToken(token);
+
+        if (!valid || !userId) {
+            throw new RpcException({
+                statusCode: 400,
+                message: 'Invalid or expired invitation link',
+                error: 'Bad Request',
+            });
+        }
+
+        const user = await this.prisma.user.update({
+            where: { id: userId },
+            data: {
+                isEmailVerified: true,
+                isActive: true,
+                status: 'ACTIVE',
+            },
+        });
+
+        await this.activityLog.log({
+            userId: user.id,
+            action: 'INVITE_ACCEPTED',
+            resource: 'user',
+            resourceId: user.id,
+            ipAddress: meta?.ipAddress,
+            userAgent: meta?.userAgent,
+        });
+
+        const tokens = await this.issueTokens(user.id);
+
+        return {
+            ...tokens,
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstname,
+                lastName: user.lastName,
+            },
+        };
     }
 
     async requestPasswordReset(email: string) {
@@ -330,6 +440,13 @@ export class AuthService {
             userId: user.id,
             email: user.email,
             firstName: user.firstname,
+        });
+
+        await this.activityLog.log({
+            userId: user.id,
+            action: 'PASSWORD_RESET',
+            resource: 'user',
+            resourceId: user.id,
         });
 
         return {

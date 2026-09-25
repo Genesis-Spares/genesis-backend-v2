@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PrismaService } from '../libs/prisma/prisma.service';
 import { EmailService } from './services/email.service';
+import { SmsService } from './services/sms.service';
 import { EmailTemplateService } from './templates/email-template.service';
 
 @Module({
@@ -30,7 +31,7 @@ import { EmailTemplateService } from './templates/email-template.service';
         ]),
     ],
     controllers: [NotificationController],
-    providers: [NotificationService, EmailService, PrismaService, EmailTemplateService],
+    providers: [NotificationService, EmailService, SmsService, PrismaService, EmailTemplateService],
     exports: [NotificationService]
 })
 export class NotificationModule { }

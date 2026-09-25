@@ -1,16 +1,22 @@
 // apps/auth-service/src/otp.service.ts
 import { Injectable, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../libs/prisma/prisma.service';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class OTPService {
     private readonly OTP_LENGTH = 6;
     private readonly OTP_EXPIRY_MINUTES = 15;
     private readonly MAX_ATTEMPTS = 3;
+    // Invitations are a link, not a code the user types in, so they get a
+    // much longer window than a regular OTP — 24-48h per the spec.
+    private readonly INVITE_EXPIRY_HOURS = 48;
 
     constructor(
         private readonly prisma: PrismaService,
+        private readonly config: ConfigService,
         @Inject('NOTIFICATION_SERVICE') private readonly notificationClient: ClientProxy,
     ) { }
 
@@ -139,6 +145,88 @@ export class OTPService {
         }
 
         // Mark OTP as used
+        await this.prisma.oTP.update({
+            where: { id: otp.id },
+            data: { used: true },
+        });
+
+        return {
+            valid: true,
+            userId: otp.userId,
+        };
+    }
+
+    /**
+     * Admin-created-user invitation: unlike generateAndSendOTP, this issues a
+     * long single-use random TOKEN (not a 6-digit code) embedded in a link,
+     * stored in the same `otps` table under type 'INVITE' so it reuses the
+     * existing used/expiresAt/upsert machinery. One active invite per email,
+     * same as every other OTP type — calling this again (e.g. "resend")
+     * simply replaces the row and restarts the 48h clock.
+     */
+    async generateAndSendInviteLink(data: { email: string; userId: string; firstName?: string }) {
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + this.INVITE_EXPIRY_HOURS);
+
+        const otp = await this.prisma.oTP.upsert({
+            where: {
+                email_type: {
+                    email: data.email,
+                    type: 'INVITE',
+                },
+            },
+            create: {
+                userId: data.userId,
+                email: data.email,
+                code: token,
+                type: 'INVITE',
+                expiresAt,
+                used: false,
+                attempts: 0,
+            },
+            update: {
+                code: token,
+                expiresAt,
+                used: false,
+                attempts: 0,
+                createdAt: new Date(),
+            },
+        });
+
+        const dashboardUrl = this.config.get<string>('DASHBOARD_URL', 'http://localhost:3000');
+        const inviteUrl = `${dashboardUrl}/verify-invite?token=${token}`;
+
+        this.notificationClient.emit('auth.invite.send', {
+            userId: data.userId,
+            email: data.email,
+            firstName: data.firstName || 'there',
+            inviteUrl,
+            expiresInHours: this.INVITE_EXPIRY_HOURS,
+        });
+
+        return otp;
+    }
+
+    /** Looks the invite up by token alone — the link carries no email/id. */
+    async verifyInviteToken(token: string): Promise<{ valid: boolean; userId?: string }> {
+        const otp = await this.prisma.oTP.findFirst({
+            where: {
+                code: token,
+                type: 'INVITE',
+                used: false,
+                expiresAt: { gt: new Date() },
+            },
+        });
+
+        if (!otp) {
+            throw new RpcException({
+                statusCode: 400,
+                message: 'This invitation link is invalid or has expired. Ask an admin to resend your invite.',
+                error: 'Bad Request',
+            });
+        }
+
         await this.prisma.oTP.update({
             where: { id: otp.id },
             data: { used: true },

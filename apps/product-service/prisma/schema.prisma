@@ -49,6 +49,13 @@ model Product {
   metaTitle       String?            @map("meta_title")
   metaDescription String?            @map("meta_description")
   compatibility   String?
+  // denormalised from PUBLISHED reviews — recalculated whenever a review changes
+  ratingAvg       Float              @default(0) @map("rating_avg")
+  ratingCount     Int                @default(0) @map("rating_count")
+  // fits any vehicle (oils, bulbs, tools…) — always shown in vehicle-filtered results
+  isUniversal     Boolean            @default(false) @map("is_universal")
+  fitments        ProductFitment[]
+  partNumbers     ProductPartNumber[]
   tags            String[]
   createdAt       DateTime           @default(now()) @map("created_at")
   updatedAt       DateTime           @updatedAt @map("updated_at")
@@ -129,6 +136,12 @@ model ProductReview {
   images     String[]
   userName   String   @map("user_name")
   userAvatar String?  @map("user_avatar")
+  // PUBLISHED counts toward the rating; HIDDEN = removed by a moderator
+  status       String   @default("PUBLISHED")
+  hiddenReason String?  @map("hidden_reason")
+  orderId      String?  @map("order_id") // the delivered order that verified the purchase
+  vehicle      String? // e.g. "2015 Toyota Fielder"
+  fitted       Boolean? // did the part fit that vehicle?
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -137,6 +150,7 @@ model ProductReview {
   @@index([productId])
   @@index([userId])
   @@index([rating])
+  @@index([status])
   @@map("product_reviews")
 }
 
@@ -165,4 +179,154 @@ model WishlistItem {
   @@unique([wishlistId, productId, variantId])
   @@index([wishlistId])
   @@map("wishlist_items")
+}
+
+/// Audit trail for every stock change. Also makes order restocks idempotent:
+/// an ORDER_CANCELLED movement is only written once per order + product.
+model StockMovement {
+  id         String   @id @default(uuid())
+  productId  String   @map("product_id")
+  change     Int // negative = stock out, positive = stock in
+  stockAfter Int      @map("stock_after")
+  // ORDER | ORDER_CANCELLED | ORDER_FAILED | RETURN | RESTOCK | ADJUSTMENT
+  reason     String
+  reference  String? // order / return / stock-receipt id
+  note       String?
+  actor      String? // staff email for manual changes
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([productId, createdAt])
+  @@index([reference])
+  @@map("stock_movements")
+}
+
+/// Structured vehicle fitment: one row per make/model/year range a part fits.
+/// Powers the storefront vehicle finder. Open-ended ranges use null years.
+model ProductFitment {
+  id        String   @id @default(uuid())
+  productId String   @map("product_id")
+  make      String // "Toyota"
+  model     String // "Fielder"
+  yearFrom  Int?     @map("year_from")
+  yearTo    Int?     @map("year_to")
+  engine    String? // optional, e.g. "1.5L 1NZ-FE"
+  notes     String? // e.g. "Front axle only"
+  createdAt DateTime @default(now()) @map("created_at")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([make, model])
+  @@map("product_fitments")
+}
+
+/// OE / manufacturer / aftermarket numbers for a part (cross-references).
+/// `normalized` is the number uppercased with spaces and punctuation removed,
+/// so "04465-12592", "0446512592" and "04465 12592" all match.
+model ProductPartNumber {
+  id         String   @id @default(uuid())
+  productId  String   @map("product_id")
+  number     String // as printed, e.g. "04465-12592"
+  normalized String // "0446512592"
+  type       String   @default("OE") // OE | MANUFACTURER | AFTERMARKET
+  brand      String? // "Toyota", "Bosch"…
+  createdAt  DateTime @default(now()) @map("created_at")
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, normalized])
+  @@index([normalized])
+  // trigram GIN index (pg_trgm, created in the migration) for fast "contains" lookups
+  @@index([normalized(ops: raw("gin_trgm_ops"))], type: Gin, map: "product_part_numbers_normalized_trgm_idx")
+  @@map("product_part_numbers")
+}
+
+/// Where stock comes from.
+model Supplier {
+  id          String         @id @default(uuid())
+  name        String         @unique
+  contactName String?        @map("contact_name")
+  phone       String?
+  email       String?
+  notes       String?
+  isActive    Boolean        @default(true) @map("is_active")
+  receipts    StockReceipt[]
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  @@map("suppliers")
+}
+
+/// A delivery of stock (goods received note). Receiving raises stock and
+/// writes one RESTOCK movement per line with reference = receipt id.
+model StockReceipt {
+  id          String             @id @default(uuid())
+  grnNumber   String             @unique @map("grn_number") // GRN-20260925-1234
+  supplierId  String?            @map("supplier_id")
+  supplierRef String?            @map("supplier_ref") // supplier invoice / delivery note no.
+  note        String?
+  actor       String?
+  totalCost   Decimal            @default(0) @map("total_cost") @db.Decimal(12, 2)
+  supplier    Supplier?          @relation(fields: [supplierId], references: [id])
+  lines       StockReceiptLine[]
+  createdAt   DateTime           @default(now()) @map("created_at")
+
+  @@index([supplierId])
+  @@index([createdAt])
+  @@map("stock_receipts")
+}
+
+model StockReceiptLine {
+  id        String       @id @default(uuid())
+  receiptId String       @map("receipt_id")
+  productId String       @map("product_id")
+  sku       String
+  name      String
+  quantity  Int
+  unitCost  Decimal?     @map("unit_cost") @db.Decimal(10, 2)
+  receipt   StockReceipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+
+  @@index([receiptId])
+  @@index([productId])
+  @@map("stock_receipt_lines")
+}
+
+/// A signed-in shopper's cart, synced from the storefront so admins can see
+/// what customers are about to buy. Guests' carts stay in their browser only.
+model CartItem {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id") // auth user id (JWT sub), same key as Wishlist
+  productId String   @map("product_id")
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@map("cart_items")
+}
+
+model FlashSale {
+  id        String          @id @default(uuid())
+  isActive  Boolean         @default(false) @map("is_active")
+  title     String          @default("Flash Deals")
+  endsAt    DateTime?       @map("ends_at")
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  items     FlashSaleItem[]
+
+  @@map("flash_sales")
+}
+
+model FlashSaleItem {
+  id          String    @id @default(uuid())
+  flashSaleId String    @map("flash_sale_id")
+  productId   String    @map("product_id")
+  salePrice   Decimal?  @map("sale_price") @db.Decimal(10, 2)
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  flashSale   FlashSale @relation(fields: [flashSaleId], references: [id], onDelete: Cascade)
+
+  @@unique([flashSaleId, productId])
+  @@index([flashSaleId])
+  @@index([productId])
+  @@map("flash_sale_items")
 }

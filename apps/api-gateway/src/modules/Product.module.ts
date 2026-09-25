@@ -6,6 +6,12 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { CategoryController } from '../controllers/Category.controller';
 import { ProductsController } from '../controllers/Product.controller';
+import { StorefrontController } from '../controllers/Storefront.controller';
+import { WishlistController } from '../controllers/Wishlist.controller';
+import { FlashSaleController } from '../controllers/FlashSale.controller';
+import { CartController } from '../controllers/Cart.controller';
+import { AdminReviewsController, MyReviewsController } from '../controllers/Reviews.controller';
+import { InventoryController } from '../controllers/Inventory.controller';
 @Module({
     imports: [
         ClientsModule.registerAsync([
@@ -33,7 +39,8 @@ import { ProductsController } from '../controllers/Product.controller';
 
         }),
     ],
-    controllers: [CategoryController, ProductsController],
+    // StorefrontController is public (no guards); Category/Products stay guarded for the dashboard.
+    controllers: [CategoryController, ProductsController, StorefrontController, WishlistController, FlashSaleController, CartController, MyReviewsController, AdminReviewsController, InventoryController],
     // exported so any other feature module in the gateway can guard its routes
     providers: [JwtAuthGuard, PermissionsGuard],
     exports: [JwtModule, JwtAuthGuard, PermissionsGuard],

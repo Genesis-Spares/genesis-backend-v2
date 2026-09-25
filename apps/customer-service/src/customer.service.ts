@@ -9,6 +9,7 @@ import {
     UpdateAddressDto,
     CreateNoteDto,
     CustomerPreferenceDto,
+    UpdateNoteDto,
 } from './dto/customer.dto';
 import { RpcException } from '@nestjs/microservices';
 import { Prisma } from './generated/prisma';
@@ -926,6 +927,96 @@ export class CustomerService {
             throw new RpcException({
                 statusCode: 500,
                 message: 'Failed to get notes',
+                error: 'Internal Server Error',
+            });
+        }
+    }
+
+
+    async updateNote(noteId: string, dto: UpdateNoteDto) {
+        try {
+            // Check if note exists
+            const existingNote = await this.prisma.customerNote.findUnique({
+                where: { id: noteId },
+            });
+
+            if (!existingNote) {
+                throw new RpcException({
+                    statusCode: 404,
+                    message: 'Note not found',
+                    error: 'Not Found',
+                });
+            }
+
+            const note = await this.prisma.customerNote.update({
+                where: { id: noteId },
+                data: {
+                    content: dto.content,
+                    type: dto.type,
+                    isPinned: dto.isPinned,
+                    isInternal: dto.isInternal,
+                },
+            });
+
+            // Log activity
+            await this.logActivity({
+                customerId: existingNote.customerId,
+                action: 'NOTE_UPDATED',
+                resource: 'NOTE',
+                resourceId: noteId,
+                metadata: {
+                    updatedFields: Object.keys(dto),
+                },
+            });
+
+            this.logger.log(`Note updated: ${noteId}`);
+            return note;
+        } catch (error) {
+            this.logger.error(`Error updating note ${noteId}:`, error);
+            if (error instanceof RpcException) throw error;
+            throw new RpcException({
+                statusCode: 500,
+                message: 'Failed to update note',
+                error: 'Internal Server Error',
+            });
+        }
+    }
+
+    async deleteNote(noteId: string) {
+        try {
+            // Check if note exists
+            const existingNote = await this.prisma.customerNote.findUnique({
+                where: { id: noteId },
+            });
+
+            if (!existingNote) {
+                throw new RpcException({
+                    statusCode: 404,
+                    message: 'Note not found',
+                    error: 'Not Found',
+                });
+            }
+
+            await this.prisma.customerNote.delete({
+                where: { id: noteId },
+            });
+
+            // Log activity
+            await this.logActivity({
+                customerId: existingNote.customerId,
+                action: 'NOTE_DELETED',
+                resource: 'NOTE',
+                resourceId: noteId,
+            });
+
+            this.logger.log(`Note deleted: ${noteId}`);
+            return { success: true, message: 'Note deleted successfully' };
+        } catch (error) {
+            this.logger.error(`Error deleting note ${noteId}:`, error);
+            if (error instanceof RpcException) throw error;
+            throw new RpcException({
+                statusCode: 500,
+                message: 'Failed to delete note',
                 error: 'Internal Server Error',
             });
         }

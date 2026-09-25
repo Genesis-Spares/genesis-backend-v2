@@ -10,6 +10,7 @@ import {
   UpdateAddressDto,
   CreateNoteDto,
   CustomerPreferenceDto,
+  UpdateNoteDto,
 } from './dto/customer.dto';
 
 @Controller()
@@ -129,6 +130,30 @@ export class CustomerController {
     return this.customerService.getNotes(data.customerId);
   }
 
+
+  @MessagePattern('customer.note.update')
+  async updateNote(@Payload() data: { noteId: string; dto: UpdateNoteDto }) {
+    if (!data.noteId) {
+      throw new RpcException({
+        statusCode: 400,
+        message: 'noteId is required',
+        error: 'Bad Request',
+      });
+    }
+    return this.customerService.updateNote(data.noteId, data.dto);
+  }
+
+  @MessagePattern('customer.note.delete')
+  async deleteNote(@Payload() data: { noteId: string }) {
+    if (!data.noteId) {
+      throw new RpcException({
+        statusCode: 400,
+        message: 'noteId is required',
+        error: 'Bad Request',
+      });
+    }
+    return this.customerService.deleteNote(data.noteId);
+  }
   // ============================================
   // ACTIVITIES
   // ============================================

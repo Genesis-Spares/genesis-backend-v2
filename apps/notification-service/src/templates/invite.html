@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You've been invited to Genesis</title>
+</head>
+
+<body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: Arial, sans-serif;">
+
+    <div style="max-width: 600px; margin: 40px auto; background: #ffffff; padding: 40px; border-radius: 8px;">
+
+        <h1>You've been invited to Genesis</h1>
+
+        <p>Hi {{firstName}},</p>
+
+        <p>
+            An administrator has created an account for you on Genesis.
+            Click the button below to verify your email address and get started.
+        </p>
+
+        <p>
+            <a href="{{inviteUrl}}" style="
+                    display: inline-block;
+                    padding: 12px 24px;
+                    background-color: #007bff;
+                    color: #ffffff;
+                    text-decoration: none;
+                    border-radius: 4px;
+                ">
+                Verify Email &amp; Accept Invite
+            </a>
+        </p>
+
+        <p>
+            This link will expire in {{expiresInHours}} hours and can only be used once.
+        </p>
+
+        <p>
+            If you weren't expecting this invitation, you can safely ignore this email.
+        </p>
+
+        <br>
+
+        <p>
+            Best regards,<br>
+            <strong>The Genesis Team</strong>
+        </p>
+
+    </div>
+
+</body>
+
+</html>

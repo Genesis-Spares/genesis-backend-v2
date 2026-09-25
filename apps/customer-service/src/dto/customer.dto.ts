@@ -253,3 +253,22 @@ export class SyncUserDataDto {
     @IsOptional()
     phone?: string;
 }
+
+export class UpdateNoteDto {
+    @IsString()
+    @IsOptional()
+    content?: string;
+
+    @IsString()
+    @IsOptional()
+    @IsEnum(['GENERAL', 'SUPPORT', 'SALES', 'COMPLAINT', 'FEEDBACK'])
+    type?: string;
+
+    @IsBoolean()
+    @IsOptional()
+    isPinned?: boolean;
+
+    @IsBoolean()
+    @IsOptional()
+    isInternal?: boolean;
+}

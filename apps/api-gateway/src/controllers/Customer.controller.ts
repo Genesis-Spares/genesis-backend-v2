@@ -11,13 +11,17 @@ import {
     UpdateAddressDto,
     CreateNoteDto,
     CustomerPreferenceDto,
+    UpdateNoteDto,
 } from "apps/customer-service/src/dto/customer.dto";
 import { catchError, firstValueFrom } from "rxjs";
 
 @Controller('customers')
 @UseGuards(JwtAuthGuard)
 export class CustomerController {
-    constructor(@Inject('CUSTOMER_SERVICE') private readonly customerClient: ClientProxy) { }
+    constructor(
+        @Inject('CUSTOMER_SERVICE') private readonly customerClient: ClientProxy,
+        @Inject('ORDER_SERVICE') private readonly orderClient: ClientProxy,
+    ) { }
 
     // ============================================
     // USER PROFILE ENDPOINTS (Customer Self-Service)
@@ -116,7 +120,7 @@ export class CustomerController {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
         const customer = await this.forward('customer.find.by.user', { userId });
-        return this.forward('customer.orders.find.all', {
+        return this.forwardToOrders('order.find.by.customer', {
             customerId: customer.id,
             page: page || 1,
             limit: limit || 20,
@@ -131,7 +135,7 @@ export class CustomerController {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
         const customer = await this.forward('customer.find.by.user', { userId });
-        return this.forward('customer.orders.stats', { customerId: customer.id });
+        return this.forwardToOrders('order.stats.by.customer', { customerId: customer.id });
     }
 
     @Get('me/wishlist')
@@ -313,6 +317,41 @@ export class CustomerController {
         return this.forward('customer.note.find.all', { customerId });
     }
 
+
+    @Put('notes/:noteId')
+    @UseGuards(PermissionsGuard)
+    @Permissions('notes:edit')
+    async updateNote(
+        @Req() req: any,
+        @Param('noteId') noteId: string,
+        @Body() dto: UpdateNoteDto
+    ) {
+        const userId = req.user?.sub as string || req.user?.id as string || req.user?.userId as string;
+
+        if (!userId) {
+            throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
+        }
+
+        return this.forward('customer.note.update', { noteId, dto });
+    }
+
+    @Delete('notes/:noteId')
+    @UseGuards(PermissionsGuard)
+    @Permissions('notes:delete')
+    async deleteNote(
+        @Req() req: any,
+        @Param('noteId') noteId: string
+    ) {
+        const userId = req.user?.sub as string || req.user?.id as string || req.user?.userId as string;
+
+        if (!userId) {
+            throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
+        }
+
+        return this.forward('customer.note.delete', { noteId });
+    }
+
+
     // ============================================
     // ADMIN PREFERENCES
     // ============================================
@@ -392,6 +431,27 @@ export class CustomerController {
     private forward(pattern: string, payload: unknown) {
         return firstValueFrom(
             this.customerClient.send(pattern, payload).pipe(
+                catchError((error) => {
+                    console.error(`Error in pattern ${pattern}:`, error);
+                    const { status, message, error: errorType } = this.normalizeError(error);
+                    throw new HttpException(
+                        {
+                            statusCode: status,
+                            message: message,
+                            error: errorType || HttpStatus[status] || 'Unknown Error',
+                            timestamp: new Date().toISOString(),
+                            path: pattern,
+                        },
+                        status
+                    );
+                }),
+            ),
+        );
+    }
+
+    private forwardToOrders(pattern: string, payload: unknown) {
+        return firstValueFrom(
+            this.orderClient.send(pattern, payload).pipe(
                 catchError((error) => {
                     console.error(`Error in pattern ${pattern}:`, error);
                     const { status, message, error: errorType } = this.normalizeError(error);

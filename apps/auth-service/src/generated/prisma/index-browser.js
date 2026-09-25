@@ -129,10 +129,23 @@ exports.Prisma.UserScalarFieldEnum = {
   phone: 'phone',
   isActive: 'isActive',
   isEmailVerified: 'isEmailVerified',
+  status: 'status',
   createAt: 'createAt',
   updateAt: 'updateAt',
   resetToken: 'resetToken',
   resetTokenExpires: 'resetTokenExpires'
+};
+
+exports.Prisma.UserActivityScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  resource: 'resource',
+  resourceId: 'resourceId',
+  metadata: 'metadata',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.OTPScalarFieldEnum = {
@@ -151,6 +164,7 @@ exports.Prisma.RoleScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  isSystem: 'isSystem',
   createAt: 'createAt'
 };
 
@@ -184,6 +198,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -194,9 +213,16 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
 
 exports.Prisma.ModelName = {
   User: 'User',
+  UserActivity: 'UserActivity',
   OTP: 'OTP',
   Role: 'Role',
   Permission: 'Permission',

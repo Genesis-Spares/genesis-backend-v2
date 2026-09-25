@@ -128,10 +128,10 @@ exports.Prisma.CategoryScalarFieldEnum = {
   icon: 'icon',
   imageUrl: 'imageUrl',
   isActive: 'isActive',
-  metadata: 'metadata',
   parentId: 'parentId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  metadata: 'metadata'
 };
 
 exports.Prisma.ProductScalarFieldEnum = {
@@ -153,11 +153,14 @@ exports.Prisma.ProductScalarFieldEnum = {
   dimensions: 'dimensions',
   metaTitle: 'metaTitle',
   metaDescription: 'metaDescription',
-  metaKeywords: 'metaKeywords',
   compatibility: 'compatibility',
+  ratingAvg: 'ratingAvg',
+  ratingCount: 'ratingCount',
+  isUniversal: 'isUniversal',
   tags: 'tags',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  metaKeywords: 'metaKeywords'
 };
 
 exports.Prisma.ProductImageScalarFieldEnum = {
@@ -207,6 +210,11 @@ exports.Prisma.ProductReviewScalarFieldEnum = {
   images: 'images',
   userName: 'userName',
   userAvatar: 'userAvatar',
+  status: 'status',
+  hiddenReason: 'hiddenReason',
+  orderId: 'orderId',
+  vehicle: 'vehicle',
+  fitted: 'fitted',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -226,6 +234,100 @@ exports.Prisma.WishlistItemScalarFieldEnum = {
   productId: 'productId',
   variantId: 'variantId',
   notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StockMovementScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  change: 'change',
+  stockAfter: 'stockAfter',
+  reason: 'reason',
+  reference: 'reference',
+  note: 'note',
+  actor: 'actor',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ProductFitmentScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  make: 'make',
+  model: 'model',
+  yearFrom: 'yearFrom',
+  yearTo: 'yearTo',
+  engine: 'engine',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ProductPartNumberScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  number: 'number',
+  normalized: 'normalized',
+  type: 'type',
+  brand: 'brand',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SupplierScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  contactName: 'contactName',
+  phone: 'phone',
+  email: 'email',
+  notes: 'notes',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StockReceiptScalarFieldEnum = {
+  id: 'id',
+  grnNumber: 'grnNumber',
+  supplierId: 'supplierId',
+  supplierRef: 'supplierRef',
+  note: 'note',
+  actor: 'actor',
+  totalCost: 'totalCost',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StockReceiptLineScalarFieldEnum = {
+  id: 'id',
+  receiptId: 'receiptId',
+  productId: 'productId',
+  sku: 'sku',
+  name: 'name',
+  quantity: 'quantity',
+  unitCost: 'unitCost'
+};
+
+exports.Prisma.CartItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FlashSaleScalarFieldEnum = {
+  id: 'id',
+  isActive: 'isActive',
+  title: 'title',
+  endsAt: 'endsAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FlashSaleItemScalarFieldEnum = {
+  id: 'id',
+  flashSaleId: 'flashSaleId',
+  productId: 'productId',
+  salePrice: 'salePrice',
+  order: 'order',
   createdAt: 'createdAt'
 };
 
@@ -268,7 +370,16 @@ exports.Prisma.ModelName = {
   ProductAttribute: 'ProductAttribute',
   ProductReview: 'ProductReview',
   Wishlist: 'Wishlist',
-  WishlistItem: 'WishlistItem'
+  WishlistItem: 'WishlistItem',
+  StockMovement: 'StockMovement',
+  ProductFitment: 'ProductFitment',
+  ProductPartNumber: 'ProductPartNumber',
+  Supplier: 'Supplier',
+  StockReceipt: 'StockReceipt',
+  StockReceiptLine: 'StockReceiptLine',
+  CartItem: 'CartItem',
+  FlashSale: 'FlashSale',
+  FlashSaleItem: 'FlashSaleItem'
 };
 
 /**

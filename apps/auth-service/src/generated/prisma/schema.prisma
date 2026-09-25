@@ -16,24 +16,50 @@ model User {
   phone           String?
   isActive        Boolean  @default(false) @map("is_active")
   isEmailVerified Boolean  @default(false) @map("is_email_verified")
+  // Richer than isActive alone — lets admins distinguish "never verified
+  // yet" from "deliberately deactivated" from "suspended for cause".
+  // isActive stays the single source of truth for "can this user log in";
+  // status is kept in sync with it by user-management.service.ts whenever
+  // status is changed (ACTIVE -> isActive true, INACTIVE/SUSPENDED -> isActive false).
+  status          String   @default("PENDING") @map("status") // PENDING, ACTIVE, INACTIVE, SUSPENDED
   createAt        DateTime @default(now()) @map("created_at")
   updateAt        DateTime @default(now()) @map("updated_at")
 
   resetToken        String?   @unique @map("reset_token")
   resetTokenExpires DateTime? @map("reset_token_expires_at")
 
-  roles UserRole[]
-  opts  OTP[]
+  roles      UserRole[]
+  opts       OTP[]
+  activities UserActivity[]
 
+  @@index([status])
   @@map("users")
+}
+
+model UserActivity {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  action     String
+  resource   String?
+  resourceId String?  @map("resource_id")
+  metadata   Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("user_activities")
 }
 
 model OTP {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
   email     String // Store email for cases where user might not exist yet
-  code      String   @map("otp_code")
-  type      String // REGISTER, LOGIN, FORGOT_PASSWORD, CHANGE_EMAIL
+  code      String   @map("otp_code") // a 6-digit code, except INVITE which stores a long random link token
+  type      String // REGISTER, LOGIN, FORGOT_PASSWORD, CHANGE_EMAIL, INVITE
   expiresAt DateTime @map("expires_at")
   used      Boolean  @default(false)
   attempts  Int      @default(0)
@@ -52,6 +78,7 @@ model Role {
   id          String   @id @default(uuid())
   name        String   @unique
   description String?
+  isSystem    Boolean  @default(false) @map("is_system")
   createAt    DateTime @default(now()) @map("created_at")
 
   users       UserRole[]

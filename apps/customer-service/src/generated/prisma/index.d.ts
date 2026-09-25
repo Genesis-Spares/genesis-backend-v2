@@ -53,6 +53,16 @@ export type CustomerSegment = $Result.DefaultSelection<Prisma.$CustomerSegmentPa
  * 
  */
 export type CustomerSegmentAssignment = $Result.DefaultSelection<Prisma.$CustomerSegmentAssignmentPayload>
+/**
+ * Model SupportMessage
+ * 
+ */
+export type SupportMessage = $Result.DefaultSelection<Prisma.$SupportMessagePayload>
+/**
+ * Model SupportMessageReply
+ * 
+ */
+export type SupportMessageReply = $Result.DefaultSelection<Prisma.$SupportMessageReplyPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -254,6 +264,26 @@ export class PrismaClient<
     * ```
     */
   get customerSegmentAssignment(): Prisma.CustomerSegmentAssignmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.supportMessage`: Exposes CRUD operations for the **SupportMessage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SupportMessages
+    * const supportMessages = await prisma.supportMessage.findMany()
+    * ```
+    */
+  get supportMessage(): Prisma.SupportMessageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.supportMessageReply`: Exposes CRUD operations for the **SupportMessageReply** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SupportMessageReplies
+    * const supportMessageReplies = await prisma.supportMessageReply.findMany()
+    * ```
+    */
+  get supportMessageReply(): Prisma.SupportMessageReplyDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -708,7 +738,9 @@ export namespace Prisma {
     CustomerNote: 'CustomerNote',
     CustomerActivity: 'CustomerActivity',
     CustomerSegment: 'CustomerSegment',
-    CustomerSegmentAssignment: 'CustomerSegmentAssignment'
+    CustomerSegmentAssignment: 'CustomerSegmentAssignment',
+    SupportMessage: 'SupportMessage',
+    SupportMessageReply: 'SupportMessageReply'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -724,7 +756,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "customer" | "customerPreference" | "address" | "communication" | "customerNote" | "customerActivity" | "customerSegment" | "customerSegmentAssignment"
+      modelProps: "customer" | "customerPreference" | "address" | "communication" | "customerNote" | "customerActivity" | "customerSegment" | "customerSegmentAssignment" | "supportMessage" | "supportMessageReply"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1320,6 +1352,154 @@ export namespace Prisma {
           }
         }
       }
+      SupportMessage: {
+        payload: Prisma.$SupportMessagePayload<ExtArgs>
+        fields: Prisma.SupportMessageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SupportMessageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SupportMessageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          findFirst: {
+            args: Prisma.SupportMessageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SupportMessageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          findMany: {
+            args: Prisma.SupportMessageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>[]
+          }
+          create: {
+            args: Prisma.SupportMessageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          createMany: {
+            args: Prisma.SupportMessageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SupportMessageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>[]
+          }
+          delete: {
+            args: Prisma.SupportMessageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          update: {
+            args: Prisma.SupportMessageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          deleteMany: {
+            args: Prisma.SupportMessageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SupportMessageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SupportMessageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>[]
+          }
+          upsert: {
+            args: Prisma.SupportMessageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          aggregate: {
+            args: Prisma.SupportMessageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSupportMessage>
+          }
+          groupBy: {
+            args: Prisma.SupportMessageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SupportMessageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SupportMessageCountArgs<ExtArgs>
+            result: $Utils.Optional<SupportMessageCountAggregateOutputType> | number
+          }
+        }
+      }
+      SupportMessageReply: {
+        payload: Prisma.$SupportMessageReplyPayload<ExtArgs>
+        fields: Prisma.SupportMessageReplyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SupportMessageReplyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SupportMessageReplyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>
+          }
+          findFirst: {
+            args: Prisma.SupportMessageReplyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SupportMessageReplyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>
+          }
+          findMany: {
+            args: Prisma.SupportMessageReplyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>[]
+          }
+          create: {
+            args: Prisma.SupportMessageReplyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>
+          }
+          createMany: {
+            args: Prisma.SupportMessageReplyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SupportMessageReplyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>[]
+          }
+          delete: {
+            args: Prisma.SupportMessageReplyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>
+          }
+          update: {
+            args: Prisma.SupportMessageReplyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>
+          }
+          deleteMany: {
+            args: Prisma.SupportMessageReplyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SupportMessageReplyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SupportMessageReplyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>[]
+          }
+          upsert: {
+            args: Prisma.SupportMessageReplyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessageReplyPayload>
+          }
+          aggregate: {
+            args: Prisma.SupportMessageReplyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSupportMessageReply>
+          }
+          groupBy: {
+            args: Prisma.SupportMessageReplyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SupportMessageReplyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SupportMessageReplyCountArgs<ExtArgs>
+            result: $Utils.Optional<SupportMessageReplyCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1451,6 +1631,8 @@ export namespace Prisma {
     customerActivity?: CustomerActivityOmit
     customerSegment?: CustomerSegmentOmit
     customerSegmentAssignment?: CustomerSegmentAssignmentOmit
+    supportMessage?: SupportMessageOmit
+    supportMessageReply?: SupportMessageReplyOmit
   }
 
   /* Types for Logging */
@@ -1581,6 +1763,37 @@ export namespace Prisma {
    */
   export type CustomerCountOutputTypeCountActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CustomerActivityWhereInput
+  }
+
+
+  /**
+   * Count Type SupportMessageCountOutputType
+   */
+
+  export type SupportMessageCountOutputType = {
+    replies: number
+  }
+
+  export type SupportMessageCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replies?: boolean | SupportMessageCountOutputTypeCountRepliesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SupportMessageCountOutputType without action
+   */
+  export type SupportMessageCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageCountOutputType
+     */
+    select?: SupportMessageCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SupportMessageCountOutputType without action
+   */
+  export type SupportMessageCountOutputTypeCountRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportMessageReplyWhereInput
   }
 
 
@@ -10836,6 +11049,2313 @@ export namespace Prisma {
 
 
   /**
+   * Model SupportMessage
+   */
+
+  export type AggregateSupportMessage = {
+    _count: SupportMessageCountAggregateOutputType | null
+    _min: SupportMessageMinAggregateOutputType | null
+    _max: SupportMessageMaxAggregateOutputType | null
+  }
+
+  export type SupportMessageMinAggregateOutputType = {
+    id: string | null
+    customerId: string | null
+    customerName: string | null
+    customerEmail: string | null
+    customerPhone: string | null
+    subject: string | null
+    body: string | null
+    status: string | null
+    priority: string | null
+    orderId: string | null
+    orderNumber: string | null
+    assignedTo: string | null
+    assignedToName: string | null
+    resolvedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SupportMessageMaxAggregateOutputType = {
+    id: string | null
+    customerId: string | null
+    customerName: string | null
+    customerEmail: string | null
+    customerPhone: string | null
+    subject: string | null
+    body: string | null
+    status: string | null
+    priority: string | null
+    orderId: string | null
+    orderNumber: string | null
+    assignedTo: string | null
+    assignedToName: string | null
+    resolvedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SupportMessageCountAggregateOutputType = {
+    id: number
+    customerId: number
+    customerName: number
+    customerEmail: number
+    customerPhone: number
+    subject: number
+    body: number
+    status: number
+    priority: number
+    orderId: number
+    orderNumber: number
+    assignedTo: number
+    assignedToName: number
+    resolvedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SupportMessageMinAggregateInputType = {
+    id?: true
+    customerId?: true
+    customerName?: true
+    customerEmail?: true
+    customerPhone?: true
+    subject?: true
+    body?: true
+    status?: true
+    priority?: true
+    orderId?: true
+    orderNumber?: true
+    assignedTo?: true
+    assignedToName?: true
+    resolvedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SupportMessageMaxAggregateInputType = {
+    id?: true
+    customerId?: true
+    customerName?: true
+    customerEmail?: true
+    customerPhone?: true
+    subject?: true
+    body?: true
+    status?: true
+    priority?: true
+    orderId?: true
+    orderNumber?: true
+    assignedTo?: true
+    assignedToName?: true
+    resolvedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SupportMessageCountAggregateInputType = {
+    id?: true
+    customerId?: true
+    customerName?: true
+    customerEmail?: true
+    customerPhone?: true
+    subject?: true
+    body?: true
+    status?: true
+    priority?: true
+    orderId?: true
+    orderNumber?: true
+    assignedTo?: true
+    assignedToName?: true
+    resolvedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SupportMessageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportMessage to aggregate.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SupportMessages
+    **/
+    _count?: true | SupportMessageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SupportMessageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SupportMessageMaxAggregateInputType
+  }
+
+  export type GetSupportMessageAggregateType<T extends SupportMessageAggregateArgs> = {
+        [P in keyof T & keyof AggregateSupportMessage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSupportMessage[P]>
+      : GetScalarType<T[P], AggregateSupportMessage[P]>
+  }
+
+
+
+
+  export type SupportMessageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportMessageWhereInput
+    orderBy?: SupportMessageOrderByWithAggregationInput | SupportMessageOrderByWithAggregationInput[]
+    by: SupportMessageScalarFieldEnum[] | SupportMessageScalarFieldEnum
+    having?: SupportMessageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SupportMessageCountAggregateInputType | true
+    _min?: SupportMessageMinAggregateInputType
+    _max?: SupportMessageMaxAggregateInputType
+  }
+
+  export type SupportMessageGroupByOutputType = {
+    id: string
+    customerId: string | null
+    customerName: string
+    customerEmail: string
+    customerPhone: string | null
+    subject: string
+    body: string
+    status: string
+    priority: string
+    orderId: string | null
+    orderNumber: string | null
+    assignedTo: string | null
+    assignedToName: string | null
+    resolvedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: SupportMessageCountAggregateOutputType | null
+    _min: SupportMessageMinAggregateOutputType | null
+    _max: SupportMessageMaxAggregateOutputType | null
+  }
+
+  type GetSupportMessageGroupByPayload<T extends SupportMessageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SupportMessageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SupportMessageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SupportMessageGroupByOutputType[P]>
+            : GetScalarType<T[P], SupportMessageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SupportMessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerId?: boolean
+    customerName?: boolean
+    customerEmail?: boolean
+    customerPhone?: boolean
+    subject?: boolean
+    body?: boolean
+    status?: boolean
+    priority?: boolean
+    orderId?: boolean
+    orderNumber?: boolean
+    assignedTo?: boolean
+    assignedToName?: boolean
+    resolvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    replies?: boolean | SupportMessage$repliesArgs<ExtArgs>
+    _count?: boolean | SupportMessageCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportMessage"]>
+
+  export type SupportMessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerId?: boolean
+    customerName?: boolean
+    customerEmail?: boolean
+    customerPhone?: boolean
+    subject?: boolean
+    body?: boolean
+    status?: boolean
+    priority?: boolean
+    orderId?: boolean
+    orderNumber?: boolean
+    assignedTo?: boolean
+    assignedToName?: boolean
+    resolvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["supportMessage"]>
+
+  export type SupportMessageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    customerId?: boolean
+    customerName?: boolean
+    customerEmail?: boolean
+    customerPhone?: boolean
+    subject?: boolean
+    body?: boolean
+    status?: boolean
+    priority?: boolean
+    orderId?: boolean
+    orderNumber?: boolean
+    assignedTo?: boolean
+    assignedToName?: boolean
+    resolvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["supportMessage"]>
+
+  export type SupportMessageSelectScalar = {
+    id?: boolean
+    customerId?: boolean
+    customerName?: boolean
+    customerEmail?: boolean
+    customerPhone?: boolean
+    subject?: boolean
+    body?: boolean
+    status?: boolean
+    priority?: boolean
+    orderId?: boolean
+    orderNumber?: boolean
+    assignedTo?: boolean
+    assignedToName?: boolean
+    resolvedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SupportMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customerId" | "customerName" | "customerEmail" | "customerPhone" | "subject" | "body" | "status" | "priority" | "orderId" | "orderNumber" | "assignedTo" | "assignedToName" | "resolvedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["supportMessage"]>
+  export type SupportMessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replies?: boolean | SupportMessage$repliesArgs<ExtArgs>
+    _count?: boolean | SupportMessageCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SupportMessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type SupportMessageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $SupportMessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SupportMessage"
+    objects: {
+      replies: Prisma.$SupportMessageReplyPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      customerId: string | null
+      customerName: string
+      customerEmail: string
+      customerPhone: string | null
+      subject: string
+      body: string
+      status: string
+      priority: string
+      orderId: string | null
+      orderNumber: string | null
+      assignedTo: string | null
+      assignedToName: string | null
+      resolvedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["supportMessage"]>
+    composites: {}
+  }
+
+  type SupportMessageGetPayload<S extends boolean | null | undefined | SupportMessageDefaultArgs> = $Result.GetResult<Prisma.$SupportMessagePayload, S>
+
+  type SupportMessageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SupportMessageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SupportMessageCountAggregateInputType | true
+    }
+
+  export interface SupportMessageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SupportMessage'], meta: { name: 'SupportMessage' } }
+    /**
+     * Find zero or one SupportMessage that matches the filter.
+     * @param {SupportMessageFindUniqueArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SupportMessageFindUniqueArgs>(args: SelectSubset<T, SupportMessageFindUniqueArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SupportMessage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SupportMessageFindUniqueOrThrowArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SupportMessageFindUniqueOrThrowArgs>(args: SelectSubset<T, SupportMessageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportMessage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageFindFirstArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SupportMessageFindFirstArgs>(args?: SelectSubset<T, SupportMessageFindFirstArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportMessage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageFindFirstOrThrowArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SupportMessageFindFirstOrThrowArgs>(args?: SelectSubset<T, SupportMessageFindFirstOrThrowArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SupportMessages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SupportMessages
+     * const supportMessages = await prisma.supportMessage.findMany()
+     * 
+     * // Get first 10 SupportMessages
+     * const supportMessages = await prisma.supportMessage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const supportMessageWithIdOnly = await prisma.supportMessage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SupportMessageFindManyArgs>(args?: SelectSubset<T, SupportMessageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SupportMessage.
+     * @param {SupportMessageCreateArgs} args - Arguments to create a SupportMessage.
+     * @example
+     * // Create one SupportMessage
+     * const SupportMessage = await prisma.supportMessage.create({
+     *   data: {
+     *     // ... data to create a SupportMessage
+     *   }
+     * })
+     * 
+     */
+    create<T extends SupportMessageCreateArgs>(args: SelectSubset<T, SupportMessageCreateArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SupportMessages.
+     * @param {SupportMessageCreateManyArgs} args - Arguments to create many SupportMessages.
+     * @example
+     * // Create many SupportMessages
+     * const supportMessage = await prisma.supportMessage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SupportMessageCreateManyArgs>(args?: SelectSubset<T, SupportMessageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SupportMessages and returns the data saved in the database.
+     * @param {SupportMessageCreateManyAndReturnArgs} args - Arguments to create many SupportMessages.
+     * @example
+     * // Create many SupportMessages
+     * const supportMessage = await prisma.supportMessage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SupportMessages and only return the `id`
+     * const supportMessageWithIdOnly = await prisma.supportMessage.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SupportMessageCreateManyAndReturnArgs>(args?: SelectSubset<T, SupportMessageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SupportMessage.
+     * @param {SupportMessageDeleteArgs} args - Arguments to delete one SupportMessage.
+     * @example
+     * // Delete one SupportMessage
+     * const SupportMessage = await prisma.supportMessage.delete({
+     *   where: {
+     *     // ... filter to delete one SupportMessage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SupportMessageDeleteArgs>(args: SelectSubset<T, SupportMessageDeleteArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SupportMessage.
+     * @param {SupportMessageUpdateArgs} args - Arguments to update one SupportMessage.
+     * @example
+     * // Update one SupportMessage
+     * const supportMessage = await prisma.supportMessage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SupportMessageUpdateArgs>(args: SelectSubset<T, SupportMessageUpdateArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SupportMessages.
+     * @param {SupportMessageDeleteManyArgs} args - Arguments to filter SupportMessages to delete.
+     * @example
+     * // Delete a few SupportMessages
+     * const { count } = await prisma.supportMessage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SupportMessageDeleteManyArgs>(args?: SelectSubset<T, SupportMessageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SupportMessages
+     * const supportMessage = await prisma.supportMessage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SupportMessageUpdateManyArgs>(args: SelectSubset<T, SupportMessageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportMessages and returns the data updated in the database.
+     * @param {SupportMessageUpdateManyAndReturnArgs} args - Arguments to update many SupportMessages.
+     * @example
+     * // Update many SupportMessages
+     * const supportMessage = await prisma.supportMessage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SupportMessages and only return the `id`
+     * const supportMessageWithIdOnly = await prisma.supportMessage.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SupportMessageUpdateManyAndReturnArgs>(args: SelectSubset<T, SupportMessageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SupportMessage.
+     * @param {SupportMessageUpsertArgs} args - Arguments to update or create a SupportMessage.
+     * @example
+     * // Update or create a SupportMessage
+     * const supportMessage = await prisma.supportMessage.upsert({
+     *   create: {
+     *     // ... data to create a SupportMessage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SupportMessage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SupportMessageUpsertArgs>(args: SelectSubset<T, SupportMessageUpsertArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SupportMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageCountArgs} args - Arguments to filter SupportMessages to count.
+     * @example
+     * // Count the number of SupportMessages
+     * const count = await prisma.supportMessage.count({
+     *   where: {
+     *     // ... the filter for the SupportMessages we want to count
+     *   }
+     * })
+    **/
+    count<T extends SupportMessageCountArgs>(
+      args?: Subset<T, SupportMessageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SupportMessageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SupportMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SupportMessageAggregateArgs>(args: Subset<T, SupportMessageAggregateArgs>): Prisma.PrismaPromise<GetSupportMessageAggregateType<T>>
+
+    /**
+     * Group by SupportMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SupportMessageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SupportMessageGroupByArgs['orderBy'] }
+        : { orderBy?: SupportMessageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SupportMessageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSupportMessageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SupportMessage model
+   */
+  readonly fields: SupportMessageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SupportMessage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SupportMessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    replies<T extends SupportMessage$repliesArgs<ExtArgs> = {}>(args?: Subset<T, SupportMessage$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SupportMessage model
+   */
+  interface SupportMessageFieldRefs {
+    readonly id: FieldRef<"SupportMessage", 'String'>
+    readonly customerId: FieldRef<"SupportMessage", 'String'>
+    readonly customerName: FieldRef<"SupportMessage", 'String'>
+    readonly customerEmail: FieldRef<"SupportMessage", 'String'>
+    readonly customerPhone: FieldRef<"SupportMessage", 'String'>
+    readonly subject: FieldRef<"SupportMessage", 'String'>
+    readonly body: FieldRef<"SupportMessage", 'String'>
+    readonly status: FieldRef<"SupportMessage", 'String'>
+    readonly priority: FieldRef<"SupportMessage", 'String'>
+    readonly orderId: FieldRef<"SupportMessage", 'String'>
+    readonly orderNumber: FieldRef<"SupportMessage", 'String'>
+    readonly assignedTo: FieldRef<"SupportMessage", 'String'>
+    readonly assignedToName: FieldRef<"SupportMessage", 'String'>
+    readonly resolvedAt: FieldRef<"SupportMessage", 'DateTime'>
+    readonly createdAt: FieldRef<"SupportMessage", 'DateTime'>
+    readonly updatedAt: FieldRef<"SupportMessage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SupportMessage findUnique
+   */
+  export type SupportMessageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage findUniqueOrThrow
+   */
+  export type SupportMessageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage findFirst
+   */
+  export type SupportMessageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportMessages.
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessages.
+     */
+    distinct?: SupportMessageScalarFieldEnum | SupportMessageScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessage findFirstOrThrow
+   */
+  export type SupportMessageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportMessages.
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessages.
+     */
+    distinct?: SupportMessageScalarFieldEnum | SupportMessageScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessage findMany
+   */
+  export type SupportMessageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessages to fetch.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SupportMessages.
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessages.
+     */
+    distinct?: SupportMessageScalarFieldEnum | SupportMessageScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessage create
+   */
+  export type SupportMessageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SupportMessage.
+     */
+    data: XOR<SupportMessageCreateInput, SupportMessageUncheckedCreateInput>
+  }
+
+  /**
+   * SupportMessage createMany
+   */
+  export type SupportMessageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SupportMessages.
+     */
+    data: SupportMessageCreateManyInput | SupportMessageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportMessage createManyAndReturn
+   */
+  export type SupportMessageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * The data used to create many SupportMessages.
+     */
+    data: SupportMessageCreateManyInput | SupportMessageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportMessage update
+   */
+  export type SupportMessageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SupportMessage.
+     */
+    data: XOR<SupportMessageUpdateInput, SupportMessageUncheckedUpdateInput>
+    /**
+     * Choose, which SupportMessage to update.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage updateMany
+   */
+  export type SupportMessageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SupportMessages.
+     */
+    data: XOR<SupportMessageUpdateManyMutationInput, SupportMessageUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportMessages to update
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * Limit how many SupportMessages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportMessage updateManyAndReturn
+   */
+  export type SupportMessageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * The data used to update SupportMessages.
+     */
+    data: XOR<SupportMessageUpdateManyMutationInput, SupportMessageUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportMessages to update
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * Limit how many SupportMessages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportMessage upsert
+   */
+  export type SupportMessageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SupportMessage to update in case it exists.
+     */
+    where: SupportMessageWhereUniqueInput
+    /**
+     * In case the SupportMessage found by the `where` argument doesn't exist, create a new SupportMessage with this data.
+     */
+    create: XOR<SupportMessageCreateInput, SupportMessageUncheckedCreateInput>
+    /**
+     * In case the SupportMessage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SupportMessageUpdateInput, SupportMessageUncheckedUpdateInput>
+  }
+
+  /**
+   * SupportMessage delete
+   */
+  export type SupportMessageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter which SupportMessage to delete.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage deleteMany
+   */
+  export type SupportMessageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportMessages to delete
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * Limit how many SupportMessages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportMessage.replies
+   */
+  export type SupportMessage$repliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    where?: SupportMessageReplyWhereInput
+    orderBy?: SupportMessageReplyOrderByWithRelationInput | SupportMessageReplyOrderByWithRelationInput[]
+    cursor?: SupportMessageReplyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupportMessageReplyScalarFieldEnum | SupportMessageReplyScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessage without action
+   */
+  export type SupportMessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SupportMessageReply
+   */
+
+  export type AggregateSupportMessageReply = {
+    _count: SupportMessageReplyCountAggregateOutputType | null
+    _min: SupportMessageReplyMinAggregateOutputType | null
+    _max: SupportMessageReplyMaxAggregateOutputType | null
+  }
+
+  export type SupportMessageReplyMinAggregateOutputType = {
+    id: string | null
+    messageId: string | null
+    body: string | null
+    authorId: string | null
+    authorName: string | null
+    isInternal: boolean | null
+    createdAt: Date | null
+  }
+
+  export type SupportMessageReplyMaxAggregateOutputType = {
+    id: string | null
+    messageId: string | null
+    body: string | null
+    authorId: string | null
+    authorName: string | null
+    isInternal: boolean | null
+    createdAt: Date | null
+  }
+
+  export type SupportMessageReplyCountAggregateOutputType = {
+    id: number
+    messageId: number
+    body: number
+    authorId: number
+    authorName: number
+    isInternal: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SupportMessageReplyMinAggregateInputType = {
+    id?: true
+    messageId?: true
+    body?: true
+    authorId?: true
+    authorName?: true
+    isInternal?: true
+    createdAt?: true
+  }
+
+  export type SupportMessageReplyMaxAggregateInputType = {
+    id?: true
+    messageId?: true
+    body?: true
+    authorId?: true
+    authorName?: true
+    isInternal?: true
+    createdAt?: true
+  }
+
+  export type SupportMessageReplyCountAggregateInputType = {
+    id?: true
+    messageId?: true
+    body?: true
+    authorId?: true
+    authorName?: true
+    isInternal?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SupportMessageReplyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportMessageReply to aggregate.
+     */
+    where?: SupportMessageReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessageReplies to fetch.
+     */
+    orderBy?: SupportMessageReplyOrderByWithRelationInput | SupportMessageReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SupportMessageReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessageReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessageReplies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SupportMessageReplies
+    **/
+    _count?: true | SupportMessageReplyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SupportMessageReplyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SupportMessageReplyMaxAggregateInputType
+  }
+
+  export type GetSupportMessageReplyAggregateType<T extends SupportMessageReplyAggregateArgs> = {
+        [P in keyof T & keyof AggregateSupportMessageReply]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSupportMessageReply[P]>
+      : GetScalarType<T[P], AggregateSupportMessageReply[P]>
+  }
+
+
+
+
+  export type SupportMessageReplyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportMessageReplyWhereInput
+    orderBy?: SupportMessageReplyOrderByWithAggregationInput | SupportMessageReplyOrderByWithAggregationInput[]
+    by: SupportMessageReplyScalarFieldEnum[] | SupportMessageReplyScalarFieldEnum
+    having?: SupportMessageReplyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SupportMessageReplyCountAggregateInputType | true
+    _min?: SupportMessageReplyMinAggregateInputType
+    _max?: SupportMessageReplyMaxAggregateInputType
+  }
+
+  export type SupportMessageReplyGroupByOutputType = {
+    id: string
+    messageId: string
+    body: string
+    authorId: string
+    authorName: string | null
+    isInternal: boolean
+    createdAt: Date
+    _count: SupportMessageReplyCountAggregateOutputType | null
+    _min: SupportMessageReplyMinAggregateOutputType | null
+    _max: SupportMessageReplyMaxAggregateOutputType | null
+  }
+
+  type GetSupportMessageReplyGroupByPayload<T extends SupportMessageReplyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SupportMessageReplyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SupportMessageReplyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SupportMessageReplyGroupByOutputType[P]>
+            : GetScalarType<T[P], SupportMessageReplyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SupportMessageReplySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    messageId?: boolean
+    body?: boolean
+    authorId?: boolean
+    authorName?: boolean
+    isInternal?: boolean
+    createdAt?: boolean
+    message?: boolean | SupportMessageDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportMessageReply"]>
+
+  export type SupportMessageReplySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    messageId?: boolean
+    body?: boolean
+    authorId?: boolean
+    authorName?: boolean
+    isInternal?: boolean
+    createdAt?: boolean
+    message?: boolean | SupportMessageDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportMessageReply"]>
+
+  export type SupportMessageReplySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    messageId?: boolean
+    body?: boolean
+    authorId?: boolean
+    authorName?: boolean
+    isInternal?: boolean
+    createdAt?: boolean
+    message?: boolean | SupportMessageDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportMessageReply"]>
+
+  export type SupportMessageReplySelectScalar = {
+    id?: boolean
+    messageId?: boolean
+    body?: boolean
+    authorId?: boolean
+    authorName?: boolean
+    isInternal?: boolean
+    createdAt?: boolean
+  }
+
+  export type SupportMessageReplyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messageId" | "body" | "authorId" | "authorName" | "isInternal" | "createdAt", ExtArgs["result"]["supportMessageReply"]>
+  export type SupportMessageReplyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    message?: boolean | SupportMessageDefaultArgs<ExtArgs>
+  }
+  export type SupportMessageReplyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    message?: boolean | SupportMessageDefaultArgs<ExtArgs>
+  }
+  export type SupportMessageReplyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    message?: boolean | SupportMessageDefaultArgs<ExtArgs>
+  }
+
+  export type $SupportMessageReplyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SupportMessageReply"
+    objects: {
+      message: Prisma.$SupportMessagePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      messageId: string
+      body: string
+      authorId: string
+      authorName: string | null
+      isInternal: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["supportMessageReply"]>
+    composites: {}
+  }
+
+  type SupportMessageReplyGetPayload<S extends boolean | null | undefined | SupportMessageReplyDefaultArgs> = $Result.GetResult<Prisma.$SupportMessageReplyPayload, S>
+
+  type SupportMessageReplyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SupportMessageReplyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SupportMessageReplyCountAggregateInputType | true
+    }
+
+  export interface SupportMessageReplyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SupportMessageReply'], meta: { name: 'SupportMessageReply' } }
+    /**
+     * Find zero or one SupportMessageReply that matches the filter.
+     * @param {SupportMessageReplyFindUniqueArgs} args - Arguments to find a SupportMessageReply
+     * @example
+     * // Get one SupportMessageReply
+     * const supportMessageReply = await prisma.supportMessageReply.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SupportMessageReplyFindUniqueArgs>(args: SelectSubset<T, SupportMessageReplyFindUniqueArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SupportMessageReply that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SupportMessageReplyFindUniqueOrThrowArgs} args - Arguments to find a SupportMessageReply
+     * @example
+     * // Get one SupportMessageReply
+     * const supportMessageReply = await prisma.supportMessageReply.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SupportMessageReplyFindUniqueOrThrowArgs>(args: SelectSubset<T, SupportMessageReplyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportMessageReply that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageReplyFindFirstArgs} args - Arguments to find a SupportMessageReply
+     * @example
+     * // Get one SupportMessageReply
+     * const supportMessageReply = await prisma.supportMessageReply.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SupportMessageReplyFindFirstArgs>(args?: SelectSubset<T, SupportMessageReplyFindFirstArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportMessageReply that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageReplyFindFirstOrThrowArgs} args - Arguments to find a SupportMessageReply
+     * @example
+     * // Get one SupportMessageReply
+     * const supportMessageReply = await prisma.supportMessageReply.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SupportMessageReplyFindFirstOrThrowArgs>(args?: SelectSubset<T, SupportMessageReplyFindFirstOrThrowArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SupportMessageReplies that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageReplyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SupportMessageReplies
+     * const supportMessageReplies = await prisma.supportMessageReply.findMany()
+     * 
+     * // Get first 10 SupportMessageReplies
+     * const supportMessageReplies = await prisma.supportMessageReply.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const supportMessageReplyWithIdOnly = await prisma.supportMessageReply.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SupportMessageReplyFindManyArgs>(args?: SelectSubset<T, SupportMessageReplyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SupportMessageReply.
+     * @param {SupportMessageReplyCreateArgs} args - Arguments to create a SupportMessageReply.
+     * @example
+     * // Create one SupportMessageReply
+     * const SupportMessageReply = await prisma.supportMessageReply.create({
+     *   data: {
+     *     // ... data to create a SupportMessageReply
+     *   }
+     * })
+     * 
+     */
+    create<T extends SupportMessageReplyCreateArgs>(args: SelectSubset<T, SupportMessageReplyCreateArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SupportMessageReplies.
+     * @param {SupportMessageReplyCreateManyArgs} args - Arguments to create many SupportMessageReplies.
+     * @example
+     * // Create many SupportMessageReplies
+     * const supportMessageReply = await prisma.supportMessageReply.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SupportMessageReplyCreateManyArgs>(args?: SelectSubset<T, SupportMessageReplyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SupportMessageReplies and returns the data saved in the database.
+     * @param {SupportMessageReplyCreateManyAndReturnArgs} args - Arguments to create many SupportMessageReplies.
+     * @example
+     * // Create many SupportMessageReplies
+     * const supportMessageReply = await prisma.supportMessageReply.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SupportMessageReplies and only return the `id`
+     * const supportMessageReplyWithIdOnly = await prisma.supportMessageReply.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SupportMessageReplyCreateManyAndReturnArgs>(args?: SelectSubset<T, SupportMessageReplyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SupportMessageReply.
+     * @param {SupportMessageReplyDeleteArgs} args - Arguments to delete one SupportMessageReply.
+     * @example
+     * // Delete one SupportMessageReply
+     * const SupportMessageReply = await prisma.supportMessageReply.delete({
+     *   where: {
+     *     // ... filter to delete one SupportMessageReply
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SupportMessageReplyDeleteArgs>(args: SelectSubset<T, SupportMessageReplyDeleteArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SupportMessageReply.
+     * @param {SupportMessageReplyUpdateArgs} args - Arguments to update one SupportMessageReply.
+     * @example
+     * // Update one SupportMessageReply
+     * const supportMessageReply = await prisma.supportMessageReply.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SupportMessageReplyUpdateArgs>(args: SelectSubset<T, SupportMessageReplyUpdateArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SupportMessageReplies.
+     * @param {SupportMessageReplyDeleteManyArgs} args - Arguments to filter SupportMessageReplies to delete.
+     * @example
+     * // Delete a few SupportMessageReplies
+     * const { count } = await prisma.supportMessageReply.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SupportMessageReplyDeleteManyArgs>(args?: SelectSubset<T, SupportMessageReplyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportMessageReplies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageReplyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SupportMessageReplies
+     * const supportMessageReply = await prisma.supportMessageReply.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SupportMessageReplyUpdateManyArgs>(args: SelectSubset<T, SupportMessageReplyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportMessageReplies and returns the data updated in the database.
+     * @param {SupportMessageReplyUpdateManyAndReturnArgs} args - Arguments to update many SupportMessageReplies.
+     * @example
+     * // Update many SupportMessageReplies
+     * const supportMessageReply = await prisma.supportMessageReply.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SupportMessageReplies and only return the `id`
+     * const supportMessageReplyWithIdOnly = await prisma.supportMessageReply.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SupportMessageReplyUpdateManyAndReturnArgs>(args: SelectSubset<T, SupportMessageReplyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SupportMessageReply.
+     * @param {SupportMessageReplyUpsertArgs} args - Arguments to update or create a SupportMessageReply.
+     * @example
+     * // Update or create a SupportMessageReply
+     * const supportMessageReply = await prisma.supportMessageReply.upsert({
+     *   create: {
+     *     // ... data to create a SupportMessageReply
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SupportMessageReply we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SupportMessageReplyUpsertArgs>(args: SelectSubset<T, SupportMessageReplyUpsertArgs<ExtArgs>>): Prisma__SupportMessageReplyClient<$Result.GetResult<Prisma.$SupportMessageReplyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SupportMessageReplies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageReplyCountArgs} args - Arguments to filter SupportMessageReplies to count.
+     * @example
+     * // Count the number of SupportMessageReplies
+     * const count = await prisma.supportMessageReply.count({
+     *   where: {
+     *     // ... the filter for the SupportMessageReplies we want to count
+     *   }
+     * })
+    **/
+    count<T extends SupportMessageReplyCountArgs>(
+      args?: Subset<T, SupportMessageReplyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SupportMessageReplyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SupportMessageReply.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageReplyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SupportMessageReplyAggregateArgs>(args: Subset<T, SupportMessageReplyAggregateArgs>): Prisma.PrismaPromise<GetSupportMessageReplyAggregateType<T>>
+
+    /**
+     * Group by SupportMessageReply.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageReplyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SupportMessageReplyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SupportMessageReplyGroupByArgs['orderBy'] }
+        : { orderBy?: SupportMessageReplyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SupportMessageReplyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSupportMessageReplyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SupportMessageReply model
+   */
+  readonly fields: SupportMessageReplyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SupportMessageReply.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SupportMessageReplyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    message<T extends SupportMessageDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SupportMessageDefaultArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SupportMessageReply model
+   */
+  interface SupportMessageReplyFieldRefs {
+    readonly id: FieldRef<"SupportMessageReply", 'String'>
+    readonly messageId: FieldRef<"SupportMessageReply", 'String'>
+    readonly body: FieldRef<"SupportMessageReply", 'String'>
+    readonly authorId: FieldRef<"SupportMessageReply", 'String'>
+    readonly authorName: FieldRef<"SupportMessageReply", 'String'>
+    readonly isInternal: FieldRef<"SupportMessageReply", 'Boolean'>
+    readonly createdAt: FieldRef<"SupportMessageReply", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SupportMessageReply findUnique
+   */
+  export type SupportMessageReplyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessageReply to fetch.
+     */
+    where: SupportMessageReplyWhereUniqueInput
+  }
+
+  /**
+   * SupportMessageReply findUniqueOrThrow
+   */
+  export type SupportMessageReplyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessageReply to fetch.
+     */
+    where: SupportMessageReplyWhereUniqueInput
+  }
+
+  /**
+   * SupportMessageReply findFirst
+   */
+  export type SupportMessageReplyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessageReply to fetch.
+     */
+    where?: SupportMessageReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessageReplies to fetch.
+     */
+    orderBy?: SupportMessageReplyOrderByWithRelationInput | SupportMessageReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportMessageReplies.
+     */
+    cursor?: SupportMessageReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessageReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessageReplies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessageReplies.
+     */
+    distinct?: SupportMessageReplyScalarFieldEnum | SupportMessageReplyScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessageReply findFirstOrThrow
+   */
+  export type SupportMessageReplyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessageReply to fetch.
+     */
+    where?: SupportMessageReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessageReplies to fetch.
+     */
+    orderBy?: SupportMessageReplyOrderByWithRelationInput | SupportMessageReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportMessageReplies.
+     */
+    cursor?: SupportMessageReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessageReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessageReplies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessageReplies.
+     */
+    distinct?: SupportMessageReplyScalarFieldEnum | SupportMessageReplyScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessageReply findMany
+   */
+  export type SupportMessageReplyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessageReplies to fetch.
+     */
+    where?: SupportMessageReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessageReplies to fetch.
+     */
+    orderBy?: SupportMessageReplyOrderByWithRelationInput | SupportMessageReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SupportMessageReplies.
+     */
+    cursor?: SupportMessageReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessageReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessageReplies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessageReplies.
+     */
+    distinct?: SupportMessageReplyScalarFieldEnum | SupportMessageReplyScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessageReply create
+   */
+  export type SupportMessageReplyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SupportMessageReply.
+     */
+    data: XOR<SupportMessageReplyCreateInput, SupportMessageReplyUncheckedCreateInput>
+  }
+
+  /**
+   * SupportMessageReply createMany
+   */
+  export type SupportMessageReplyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SupportMessageReplies.
+     */
+    data: SupportMessageReplyCreateManyInput | SupportMessageReplyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportMessageReply createManyAndReturn
+   */
+  export type SupportMessageReplyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * The data used to create many SupportMessageReplies.
+     */
+    data: SupportMessageReplyCreateManyInput | SupportMessageReplyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportMessageReply update
+   */
+  export type SupportMessageReplyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SupportMessageReply.
+     */
+    data: XOR<SupportMessageReplyUpdateInput, SupportMessageReplyUncheckedUpdateInput>
+    /**
+     * Choose, which SupportMessageReply to update.
+     */
+    where: SupportMessageReplyWhereUniqueInput
+  }
+
+  /**
+   * SupportMessageReply updateMany
+   */
+  export type SupportMessageReplyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SupportMessageReplies.
+     */
+    data: XOR<SupportMessageReplyUpdateManyMutationInput, SupportMessageReplyUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportMessageReplies to update
+     */
+    where?: SupportMessageReplyWhereInput
+    /**
+     * Limit how many SupportMessageReplies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportMessageReply updateManyAndReturn
+   */
+  export type SupportMessageReplyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * The data used to update SupportMessageReplies.
+     */
+    data: XOR<SupportMessageReplyUpdateManyMutationInput, SupportMessageReplyUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportMessageReplies to update
+     */
+    where?: SupportMessageReplyWhereInput
+    /**
+     * Limit how many SupportMessageReplies to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportMessageReply upsert
+   */
+  export type SupportMessageReplyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SupportMessageReply to update in case it exists.
+     */
+    where: SupportMessageReplyWhereUniqueInput
+    /**
+     * In case the SupportMessageReply found by the `where` argument doesn't exist, create a new SupportMessageReply with this data.
+     */
+    create: XOR<SupportMessageReplyCreateInput, SupportMessageReplyUncheckedCreateInput>
+    /**
+     * In case the SupportMessageReply was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SupportMessageReplyUpdateInput, SupportMessageReplyUncheckedUpdateInput>
+  }
+
+  /**
+   * SupportMessageReply delete
+   */
+  export type SupportMessageReplyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+    /**
+     * Filter which SupportMessageReply to delete.
+     */
+    where: SupportMessageReplyWhereUniqueInput
+  }
+
+  /**
+   * SupportMessageReply deleteMany
+   */
+  export type SupportMessageReplyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportMessageReplies to delete
+     */
+    where?: SupportMessageReplyWhereInput
+    /**
+     * Limit how many SupportMessageReplies to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportMessageReply without action
+   */
+  export type SupportMessageReplyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessageReply
+     */
+    select?: SupportMessageReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessageReply
+     */
+    omit?: SupportMessageReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageReplyInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -10989,6 +13509,41 @@ export namespace Prisma {
   };
 
   export type CustomerSegmentAssignmentScalarFieldEnum = (typeof CustomerSegmentAssignmentScalarFieldEnum)[keyof typeof CustomerSegmentAssignmentScalarFieldEnum]
+
+
+  export const SupportMessageScalarFieldEnum: {
+    id: 'id',
+    customerId: 'customerId',
+    customerName: 'customerName',
+    customerEmail: 'customerEmail',
+    customerPhone: 'customerPhone',
+    subject: 'subject',
+    body: 'body',
+    status: 'status',
+    priority: 'priority',
+    orderId: 'orderId',
+    orderNumber: 'orderNumber',
+    assignedTo: 'assignedTo',
+    assignedToName: 'assignedToName',
+    resolvedAt: 'resolvedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SupportMessageScalarFieldEnum = (typeof SupportMessageScalarFieldEnum)[keyof typeof SupportMessageScalarFieldEnum]
+
+
+  export const SupportMessageReplyScalarFieldEnum: {
+    id: 'id',
+    messageId: 'messageId',
+    body: 'body',
+    authorId: 'authorId',
+    authorName: 'authorName',
+    isInternal: 'isInternal',
+    createdAt: 'createdAt'
+  };
+
+  export type SupportMessageReplyScalarFieldEnum = (typeof SupportMessageReplyScalarFieldEnum)[keyof typeof SupportMessageReplyScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11184,10 +13739,10 @@ export namespace Prisma {
   export type CustomerWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     userId?: string
+    email?: string
     AND?: CustomerWhereInput | CustomerWhereInput[]
     OR?: CustomerWhereInput[]
     NOT?: CustomerWhereInput | CustomerWhereInput[]
-    email?: StringFilter<"Customer"> | string
     firstName?: StringFilter<"Customer"> | string
     lastName?: StringFilter<"Customer"> | string
     phone?: StringNullableFilter<"Customer"> | string | null
@@ -11209,7 +13764,7 @@ export namespace Prisma {
     communications?: CommunicationListRelationFilter
     notes?: CustomerNoteListRelationFilter
     activities?: CustomerActivityListRelationFilter
-  }, "id" | "userId">
+  }, "id" | "userId" | "email">
 
   export type CustomerOrderByWithAggregationInput = {
     id?: SortOrder
@@ -11844,6 +14399,181 @@ export namespace Prisma {
     customerId?: StringWithAggregatesFilter<"CustomerSegmentAssignment"> | string
     segmentId?: StringWithAggregatesFilter<"CustomerSegmentAssignment"> | string
     assignedAt?: DateTimeWithAggregatesFilter<"CustomerSegmentAssignment"> | Date | string
+  }
+
+  export type SupportMessageWhereInput = {
+    AND?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    OR?: SupportMessageWhereInput[]
+    NOT?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    id?: StringFilter<"SupportMessage"> | string
+    customerId?: StringNullableFilter<"SupportMessage"> | string | null
+    customerName?: StringFilter<"SupportMessage"> | string
+    customerEmail?: StringFilter<"SupportMessage"> | string
+    customerPhone?: StringNullableFilter<"SupportMessage"> | string | null
+    subject?: StringFilter<"SupportMessage"> | string
+    body?: StringFilter<"SupportMessage"> | string
+    status?: StringFilter<"SupportMessage"> | string
+    priority?: StringFilter<"SupportMessage"> | string
+    orderId?: StringNullableFilter<"SupportMessage"> | string | null
+    orderNumber?: StringNullableFilter<"SupportMessage"> | string | null
+    assignedTo?: StringNullableFilter<"SupportMessage"> | string | null
+    assignedToName?: StringNullableFilter<"SupportMessage"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"SupportMessage"> | Date | string | null
+    createdAt?: DateTimeFilter<"SupportMessage"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportMessage"> | Date | string
+    replies?: SupportMessageReplyListRelationFilter
+  }
+
+  export type SupportMessageOrderByWithRelationInput = {
+    id?: SortOrder
+    customerId?: SortOrderInput | SortOrder
+    customerName?: SortOrder
+    customerEmail?: SortOrder
+    customerPhone?: SortOrderInput | SortOrder
+    subject?: SortOrder
+    body?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    orderId?: SortOrderInput | SortOrder
+    orderNumber?: SortOrderInput | SortOrder
+    assignedTo?: SortOrderInput | SortOrder
+    assignedToName?: SortOrderInput | SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    replies?: SupportMessageReplyOrderByRelationAggregateInput
+  }
+
+  export type SupportMessageWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    OR?: SupportMessageWhereInput[]
+    NOT?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    customerId?: StringNullableFilter<"SupportMessage"> | string | null
+    customerName?: StringFilter<"SupportMessage"> | string
+    customerEmail?: StringFilter<"SupportMessage"> | string
+    customerPhone?: StringNullableFilter<"SupportMessage"> | string | null
+    subject?: StringFilter<"SupportMessage"> | string
+    body?: StringFilter<"SupportMessage"> | string
+    status?: StringFilter<"SupportMessage"> | string
+    priority?: StringFilter<"SupportMessage"> | string
+    orderId?: StringNullableFilter<"SupportMessage"> | string | null
+    orderNumber?: StringNullableFilter<"SupportMessage"> | string | null
+    assignedTo?: StringNullableFilter<"SupportMessage"> | string | null
+    assignedToName?: StringNullableFilter<"SupportMessage"> | string | null
+    resolvedAt?: DateTimeNullableFilter<"SupportMessage"> | Date | string | null
+    createdAt?: DateTimeFilter<"SupportMessage"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportMessage"> | Date | string
+    replies?: SupportMessageReplyListRelationFilter
+  }, "id">
+
+  export type SupportMessageOrderByWithAggregationInput = {
+    id?: SortOrder
+    customerId?: SortOrderInput | SortOrder
+    customerName?: SortOrder
+    customerEmail?: SortOrder
+    customerPhone?: SortOrderInput | SortOrder
+    subject?: SortOrder
+    body?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    orderId?: SortOrderInput | SortOrder
+    orderNumber?: SortOrderInput | SortOrder
+    assignedTo?: SortOrderInput | SortOrder
+    assignedToName?: SortOrderInput | SortOrder
+    resolvedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SupportMessageCountOrderByAggregateInput
+    _max?: SupportMessageMaxOrderByAggregateInput
+    _min?: SupportMessageMinOrderByAggregateInput
+  }
+
+  export type SupportMessageScalarWhereWithAggregatesInput = {
+    AND?: SupportMessageScalarWhereWithAggregatesInput | SupportMessageScalarWhereWithAggregatesInput[]
+    OR?: SupportMessageScalarWhereWithAggregatesInput[]
+    NOT?: SupportMessageScalarWhereWithAggregatesInput | SupportMessageScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SupportMessage"> | string
+    customerId?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    customerName?: StringWithAggregatesFilter<"SupportMessage"> | string
+    customerEmail?: StringWithAggregatesFilter<"SupportMessage"> | string
+    customerPhone?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    subject?: StringWithAggregatesFilter<"SupportMessage"> | string
+    body?: StringWithAggregatesFilter<"SupportMessage"> | string
+    status?: StringWithAggregatesFilter<"SupportMessage"> | string
+    priority?: StringWithAggregatesFilter<"SupportMessage"> | string
+    orderId?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    orderNumber?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    assignedTo?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    assignedToName?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    resolvedAt?: DateTimeNullableWithAggregatesFilter<"SupportMessage"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"SupportMessage"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SupportMessage"> | Date | string
+  }
+
+  export type SupportMessageReplyWhereInput = {
+    AND?: SupportMessageReplyWhereInput | SupportMessageReplyWhereInput[]
+    OR?: SupportMessageReplyWhereInput[]
+    NOT?: SupportMessageReplyWhereInput | SupportMessageReplyWhereInput[]
+    id?: StringFilter<"SupportMessageReply"> | string
+    messageId?: StringFilter<"SupportMessageReply"> | string
+    body?: StringFilter<"SupportMessageReply"> | string
+    authorId?: StringFilter<"SupportMessageReply"> | string
+    authorName?: StringNullableFilter<"SupportMessageReply"> | string | null
+    isInternal?: BoolFilter<"SupportMessageReply"> | boolean
+    createdAt?: DateTimeFilter<"SupportMessageReply"> | Date | string
+    message?: XOR<SupportMessageScalarRelationFilter, SupportMessageWhereInput>
+  }
+
+  export type SupportMessageReplyOrderByWithRelationInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    body?: SortOrder
+    authorId?: SortOrder
+    authorName?: SortOrderInput | SortOrder
+    isInternal?: SortOrder
+    createdAt?: SortOrder
+    message?: SupportMessageOrderByWithRelationInput
+  }
+
+  export type SupportMessageReplyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SupportMessageReplyWhereInput | SupportMessageReplyWhereInput[]
+    OR?: SupportMessageReplyWhereInput[]
+    NOT?: SupportMessageReplyWhereInput | SupportMessageReplyWhereInput[]
+    messageId?: StringFilter<"SupportMessageReply"> | string
+    body?: StringFilter<"SupportMessageReply"> | string
+    authorId?: StringFilter<"SupportMessageReply"> | string
+    authorName?: StringNullableFilter<"SupportMessageReply"> | string | null
+    isInternal?: BoolFilter<"SupportMessageReply"> | boolean
+    createdAt?: DateTimeFilter<"SupportMessageReply"> | Date | string
+    message?: XOR<SupportMessageScalarRelationFilter, SupportMessageWhereInput>
+  }, "id">
+
+  export type SupportMessageReplyOrderByWithAggregationInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    body?: SortOrder
+    authorId?: SortOrder
+    authorName?: SortOrderInput | SortOrder
+    isInternal?: SortOrder
+    createdAt?: SortOrder
+    _count?: SupportMessageReplyCountOrderByAggregateInput
+    _max?: SupportMessageReplyMaxOrderByAggregateInput
+    _min?: SupportMessageReplyMinOrderByAggregateInput
+  }
+
+  export type SupportMessageReplyScalarWhereWithAggregatesInput = {
+    AND?: SupportMessageReplyScalarWhereWithAggregatesInput | SupportMessageReplyScalarWhereWithAggregatesInput[]
+    OR?: SupportMessageReplyScalarWhereWithAggregatesInput[]
+    NOT?: SupportMessageReplyScalarWhereWithAggregatesInput | SupportMessageReplyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SupportMessageReply"> | string
+    messageId?: StringWithAggregatesFilter<"SupportMessageReply"> | string
+    body?: StringWithAggregatesFilter<"SupportMessageReply"> | string
+    authorId?: StringWithAggregatesFilter<"SupportMessageReply"> | string
+    authorName?: StringNullableWithAggregatesFilter<"SupportMessageReply"> | string | null
+    isInternal?: BoolWithAggregatesFilter<"SupportMessageReply"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"SupportMessageReply"> | Date | string
   }
 
   export type CustomerCreateInput = {
@@ -12687,6 +15417,212 @@ export namespace Prisma {
     assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SupportMessageCreateInput = {
+    id?: string
+    customerId?: string | null
+    customerName: string
+    customerEmail: string
+    customerPhone?: string | null
+    subject: string
+    body: string
+    status?: string
+    priority?: string
+    orderId?: string | null
+    orderNumber?: string | null
+    assignedTo?: string | null
+    assignedToName?: string | null
+    resolvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: SupportMessageReplyCreateNestedManyWithoutMessageInput
+  }
+
+  export type SupportMessageUncheckedCreateInput = {
+    id?: string
+    customerId?: string | null
+    customerName: string
+    customerEmail: string
+    customerPhone?: string | null
+    subject: string
+    body: string
+    status?: string
+    priority?: string
+    orderId?: string | null
+    orderNumber?: string | null
+    assignedTo?: string | null
+    assignedToName?: string | null
+    resolvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: SupportMessageReplyUncheckedCreateNestedManyWithoutMessageInput
+  }
+
+  export type SupportMessageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerName?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    priority?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: SupportMessageReplyUpdateManyWithoutMessageNestedInput
+  }
+
+  export type SupportMessageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerName?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    priority?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: SupportMessageReplyUncheckedUpdateManyWithoutMessageNestedInput
+  }
+
+  export type SupportMessageCreateManyInput = {
+    id?: string
+    customerId?: string | null
+    customerName: string
+    customerEmail: string
+    customerPhone?: string | null
+    subject: string
+    body: string
+    status?: string
+    priority?: string
+    orderId?: string | null
+    orderNumber?: string | null
+    assignedTo?: string | null
+    assignedToName?: string | null
+    resolvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SupportMessageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerName?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    priority?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerName?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    priority?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageReplyCreateInput = {
+    id?: string
+    body: string
+    authorId: string
+    authorName?: string | null
+    isInternal?: boolean
+    createdAt?: Date | string
+    message: SupportMessageCreateNestedOneWithoutRepliesInput
+  }
+
+  export type SupportMessageReplyUncheckedCreateInput = {
+    id?: string
+    messageId: string
+    body: string
+    authorId: string
+    authorName?: string | null
+    isInternal?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SupportMessageReplyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    authorName?: NullableStringFieldUpdateOperationsInput | string | null
+    isInternal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    message?: SupportMessageUpdateOneRequiredWithoutRepliesNestedInput
+  }
+
+  export type SupportMessageReplyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    messageId?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    authorName?: NullableStringFieldUpdateOperationsInput | string | null
+    isInternal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageReplyCreateManyInput = {
+    id?: string
+    messageId: string
+    body: string
+    authorId: string
+    authorName?: string | null
+    isInternal?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SupportMessageReplyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    authorName?: NullableStringFieldUpdateOperationsInput | string | null
+    isInternal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageReplyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    messageId?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    authorName?: NullableStringFieldUpdateOperationsInput | string | null
+    isInternal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -13401,6 +16337,108 @@ export namespace Prisma {
     assignedAt?: SortOrder
   }
 
+  export type SupportMessageReplyListRelationFilter = {
+    every?: SupportMessageReplyWhereInput
+    some?: SupportMessageReplyWhereInput
+    none?: SupportMessageReplyWhereInput
+  }
+
+  export type SupportMessageReplyOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SupportMessageCountOrderByAggregateInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    customerName?: SortOrder
+    customerEmail?: SortOrder
+    customerPhone?: SortOrder
+    subject?: SortOrder
+    body?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    orderId?: SortOrder
+    orderNumber?: SortOrder
+    assignedTo?: SortOrder
+    assignedToName?: SortOrder
+    resolvedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SupportMessageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    customerName?: SortOrder
+    customerEmail?: SortOrder
+    customerPhone?: SortOrder
+    subject?: SortOrder
+    body?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    orderId?: SortOrder
+    orderNumber?: SortOrder
+    assignedTo?: SortOrder
+    assignedToName?: SortOrder
+    resolvedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SupportMessageMinOrderByAggregateInput = {
+    id?: SortOrder
+    customerId?: SortOrder
+    customerName?: SortOrder
+    customerEmail?: SortOrder
+    customerPhone?: SortOrder
+    subject?: SortOrder
+    body?: SortOrder
+    status?: SortOrder
+    priority?: SortOrder
+    orderId?: SortOrder
+    orderNumber?: SortOrder
+    assignedTo?: SortOrder
+    assignedToName?: SortOrder
+    resolvedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SupportMessageScalarRelationFilter = {
+    is?: SupportMessageWhereInput
+    isNot?: SupportMessageWhereInput
+  }
+
+  export type SupportMessageReplyCountOrderByAggregateInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    body?: SortOrder
+    authorId?: SortOrder
+    authorName?: SortOrder
+    isInternal?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SupportMessageReplyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    body?: SortOrder
+    authorId?: SortOrder
+    authorName?: SortOrder
+    isInternal?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SupportMessageReplyMinOrderByAggregateInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    body?: SortOrder
+    authorId?: SortOrder
+    authorName?: SortOrder
+    isInternal?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type CustomerPreferenceCreateNestedOneWithoutCustomerInput = {
     create?: XOR<CustomerPreferenceCreateWithoutCustomerInput, CustomerPreferenceUncheckedCreateWithoutCustomerInput>
     connectOrCreate?: CustomerPreferenceCreateOrConnectWithoutCustomerInput
@@ -13723,6 +16761,62 @@ export namespace Prisma {
     upsert?: CustomerUpsertWithoutActivitiesInput
     connect?: CustomerWhereUniqueInput
     update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutActivitiesInput, CustomerUpdateWithoutActivitiesInput>, CustomerUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type SupportMessageReplyCreateNestedManyWithoutMessageInput = {
+    create?: XOR<SupportMessageReplyCreateWithoutMessageInput, SupportMessageReplyUncheckedCreateWithoutMessageInput> | SupportMessageReplyCreateWithoutMessageInput[] | SupportMessageReplyUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: SupportMessageReplyCreateOrConnectWithoutMessageInput | SupportMessageReplyCreateOrConnectWithoutMessageInput[]
+    createMany?: SupportMessageReplyCreateManyMessageInputEnvelope
+    connect?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+  }
+
+  export type SupportMessageReplyUncheckedCreateNestedManyWithoutMessageInput = {
+    create?: XOR<SupportMessageReplyCreateWithoutMessageInput, SupportMessageReplyUncheckedCreateWithoutMessageInput> | SupportMessageReplyCreateWithoutMessageInput[] | SupportMessageReplyUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: SupportMessageReplyCreateOrConnectWithoutMessageInput | SupportMessageReplyCreateOrConnectWithoutMessageInput[]
+    createMany?: SupportMessageReplyCreateManyMessageInputEnvelope
+    connect?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+  }
+
+  export type SupportMessageReplyUpdateManyWithoutMessageNestedInput = {
+    create?: XOR<SupportMessageReplyCreateWithoutMessageInput, SupportMessageReplyUncheckedCreateWithoutMessageInput> | SupportMessageReplyCreateWithoutMessageInput[] | SupportMessageReplyUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: SupportMessageReplyCreateOrConnectWithoutMessageInput | SupportMessageReplyCreateOrConnectWithoutMessageInput[]
+    upsert?: SupportMessageReplyUpsertWithWhereUniqueWithoutMessageInput | SupportMessageReplyUpsertWithWhereUniqueWithoutMessageInput[]
+    createMany?: SupportMessageReplyCreateManyMessageInputEnvelope
+    set?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    disconnect?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    delete?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    connect?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    update?: SupportMessageReplyUpdateWithWhereUniqueWithoutMessageInput | SupportMessageReplyUpdateWithWhereUniqueWithoutMessageInput[]
+    updateMany?: SupportMessageReplyUpdateManyWithWhereWithoutMessageInput | SupportMessageReplyUpdateManyWithWhereWithoutMessageInput[]
+    deleteMany?: SupportMessageReplyScalarWhereInput | SupportMessageReplyScalarWhereInput[]
+  }
+
+  export type SupportMessageReplyUncheckedUpdateManyWithoutMessageNestedInput = {
+    create?: XOR<SupportMessageReplyCreateWithoutMessageInput, SupportMessageReplyUncheckedCreateWithoutMessageInput> | SupportMessageReplyCreateWithoutMessageInput[] | SupportMessageReplyUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: SupportMessageReplyCreateOrConnectWithoutMessageInput | SupportMessageReplyCreateOrConnectWithoutMessageInput[]
+    upsert?: SupportMessageReplyUpsertWithWhereUniqueWithoutMessageInput | SupportMessageReplyUpsertWithWhereUniqueWithoutMessageInput[]
+    createMany?: SupportMessageReplyCreateManyMessageInputEnvelope
+    set?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    disconnect?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    delete?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    connect?: SupportMessageReplyWhereUniqueInput | SupportMessageReplyWhereUniqueInput[]
+    update?: SupportMessageReplyUpdateWithWhereUniqueWithoutMessageInput | SupportMessageReplyUpdateWithWhereUniqueWithoutMessageInput[]
+    updateMany?: SupportMessageReplyUpdateManyWithWhereWithoutMessageInput | SupportMessageReplyUpdateManyWithWhereWithoutMessageInput[]
+    deleteMany?: SupportMessageReplyScalarWhereInput | SupportMessageReplyScalarWhereInput[]
+  }
+
+  export type SupportMessageCreateNestedOneWithoutRepliesInput = {
+    create?: XOR<SupportMessageCreateWithoutRepliesInput, SupportMessageUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: SupportMessageCreateOrConnectWithoutRepliesInput
+    connect?: SupportMessageWhereUniqueInput
+  }
+
+  export type SupportMessageUpdateOneRequiredWithoutRepliesNestedInput = {
+    create?: XOR<SupportMessageCreateWithoutRepliesInput, SupportMessageUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: SupportMessageCreateOrConnectWithoutRepliesInput
+    upsert?: SupportMessageUpsertWithoutRepliesInput
+    connect?: SupportMessageWhereUniqueInput
+    update?: XOR<XOR<SupportMessageUpdateToOneWithWhereWithoutRepliesInput, SupportMessageUpdateWithoutRepliesInput>, SupportMessageUncheckedUpdateWithoutRepliesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -14949,6 +18043,155 @@ export namespace Prisma {
     notes?: CustomerNoteUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
+  export type SupportMessageReplyCreateWithoutMessageInput = {
+    id?: string
+    body: string
+    authorId: string
+    authorName?: string | null
+    isInternal?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SupportMessageReplyUncheckedCreateWithoutMessageInput = {
+    id?: string
+    body: string
+    authorId: string
+    authorName?: string | null
+    isInternal?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SupportMessageReplyCreateOrConnectWithoutMessageInput = {
+    where: SupportMessageReplyWhereUniqueInput
+    create: XOR<SupportMessageReplyCreateWithoutMessageInput, SupportMessageReplyUncheckedCreateWithoutMessageInput>
+  }
+
+  export type SupportMessageReplyCreateManyMessageInputEnvelope = {
+    data: SupportMessageReplyCreateManyMessageInput | SupportMessageReplyCreateManyMessageInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupportMessageReplyUpsertWithWhereUniqueWithoutMessageInput = {
+    where: SupportMessageReplyWhereUniqueInput
+    update: XOR<SupportMessageReplyUpdateWithoutMessageInput, SupportMessageReplyUncheckedUpdateWithoutMessageInput>
+    create: XOR<SupportMessageReplyCreateWithoutMessageInput, SupportMessageReplyUncheckedCreateWithoutMessageInput>
+  }
+
+  export type SupportMessageReplyUpdateWithWhereUniqueWithoutMessageInput = {
+    where: SupportMessageReplyWhereUniqueInput
+    data: XOR<SupportMessageReplyUpdateWithoutMessageInput, SupportMessageReplyUncheckedUpdateWithoutMessageInput>
+  }
+
+  export type SupportMessageReplyUpdateManyWithWhereWithoutMessageInput = {
+    where: SupportMessageReplyScalarWhereInput
+    data: XOR<SupportMessageReplyUpdateManyMutationInput, SupportMessageReplyUncheckedUpdateManyWithoutMessageInput>
+  }
+
+  export type SupportMessageReplyScalarWhereInput = {
+    AND?: SupportMessageReplyScalarWhereInput | SupportMessageReplyScalarWhereInput[]
+    OR?: SupportMessageReplyScalarWhereInput[]
+    NOT?: SupportMessageReplyScalarWhereInput | SupportMessageReplyScalarWhereInput[]
+    id?: StringFilter<"SupportMessageReply"> | string
+    messageId?: StringFilter<"SupportMessageReply"> | string
+    body?: StringFilter<"SupportMessageReply"> | string
+    authorId?: StringFilter<"SupportMessageReply"> | string
+    authorName?: StringNullableFilter<"SupportMessageReply"> | string | null
+    isInternal?: BoolFilter<"SupportMessageReply"> | boolean
+    createdAt?: DateTimeFilter<"SupportMessageReply"> | Date | string
+  }
+
+  export type SupportMessageCreateWithoutRepliesInput = {
+    id?: string
+    customerId?: string | null
+    customerName: string
+    customerEmail: string
+    customerPhone?: string | null
+    subject: string
+    body: string
+    status?: string
+    priority?: string
+    orderId?: string | null
+    orderNumber?: string | null
+    assignedTo?: string | null
+    assignedToName?: string | null
+    resolvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SupportMessageUncheckedCreateWithoutRepliesInput = {
+    id?: string
+    customerId?: string | null
+    customerName: string
+    customerEmail: string
+    customerPhone?: string | null
+    subject: string
+    body: string
+    status?: string
+    priority?: string
+    orderId?: string | null
+    orderNumber?: string | null
+    assignedTo?: string | null
+    assignedToName?: string | null
+    resolvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SupportMessageCreateOrConnectWithoutRepliesInput = {
+    where: SupportMessageWhereUniqueInput
+    create: XOR<SupportMessageCreateWithoutRepliesInput, SupportMessageUncheckedCreateWithoutRepliesInput>
+  }
+
+  export type SupportMessageUpsertWithoutRepliesInput = {
+    update: XOR<SupportMessageUpdateWithoutRepliesInput, SupportMessageUncheckedUpdateWithoutRepliesInput>
+    create: XOR<SupportMessageCreateWithoutRepliesInput, SupportMessageUncheckedCreateWithoutRepliesInput>
+    where?: SupportMessageWhereInput
+  }
+
+  export type SupportMessageUpdateToOneWithWhereWithoutRepliesInput = {
+    where?: SupportMessageWhereInput
+    data: XOR<SupportMessageUpdateWithoutRepliesInput, SupportMessageUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type SupportMessageUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerName?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    priority?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageUncheckedUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    customerName?: StringFieldUpdateOperationsInput | string
+    customerEmail?: StringFieldUpdateOperationsInput | string
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    subject?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    priority?: StringFieldUpdateOperationsInput | string
+    orderId?: NullableStringFieldUpdateOperationsInput | string | null
+    orderNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedTo?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedToName?: NullableStringFieldUpdateOperationsInput | string | null
+    resolvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AddressCreateManyCustomerInput = {
     id?: string
     label: string
@@ -15182,6 +18425,42 @@ export namespace Prisma {
     metadata?: NullableJsonNullValueInput | InputJsonValue
     ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
     userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageReplyCreateManyMessageInput = {
+    id?: string
+    body: string
+    authorId: string
+    authorName?: string | null
+    isInternal?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SupportMessageReplyUpdateWithoutMessageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    authorName?: NullableStringFieldUpdateOperationsInput | string | null
+    isInternal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageReplyUncheckedUpdateWithoutMessageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    authorName?: NullableStringFieldUpdateOperationsInput | string | null
+    isInternal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SupportMessageReplyUncheckedUpdateManyWithoutMessageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    authorName?: NullableStringFieldUpdateOperationsInput | string | null
+    isInternal?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

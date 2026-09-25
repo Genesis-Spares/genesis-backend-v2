@@ -26,6 +26,9 @@ const defaultPermissions = [
     { resource: 'role', action: 'update' },
     { resource: 'role', action: 'delete' },
 
+    // Permission catalog (needed to render the role/permission builder)
+    { resource: 'permission', action: 'read' },
+
     // Customer Management
     { resource: 'customer', action: 'create' },
     { resource: 'customer', action: 'read' },
@@ -57,6 +60,11 @@ const defaultPermissions = [
     { resource: 'order', action: 'update' },
     { resource: 'order', action: 'delete' },
     { resource: 'order', action: 'manage' },
+
+    // Support Messages (customer inbox)
+    { resource: 'message', action: 'create' },
+    { resource: 'message', action: 'read' },
+    { resource: 'message', action: 'update' },
 
     // Payment Management
     { resource: 'payment', action: 'create' },
@@ -101,11 +109,15 @@ const defaultPermissions = [
 ];
 
 // Define roles with their permissions
+// isSystem marks the five built-in roles as non-deletable from the RBAC
+// admin UI (see role-management.service.ts) — their permissions can still
+// be edited, but the roles themselves are protected from accidental removal.
 const roles = {
     // Customer - Basic user role
     customer: {
         name: 'customer',
         description: 'Default storefront customer',
+        isSystem: true,
         permissions: [
             { resource: 'product', action: 'read' },
             { resource: 'category', action: 'read' },
@@ -134,6 +146,7 @@ const roles = {
     staff: {
         name: 'staff',
         description: 'Store staff member',
+        isSystem: true,
         permissions: [
             { resource: 'product', action: 'create' },
             { resource: 'product', action: 'read' },
@@ -149,6 +162,8 @@ const roles = {
             { resource: 'review', action: 'read' },
             { resource: 'review', action: 'update' },
             { resource: 'user', action: 'read' },
+            { resource: 'message', action: 'read' },
+            { resource: 'message', action: 'update' },
         ],
     },
 
@@ -156,6 +171,7 @@ const roles = {
     manager: {
         name: 'manager',
         description: 'Store manager',
+        isSystem: true,
         permissions: [
             { resource: 'product', action: 'create' },
             { resource: 'product', action: 'read' },
@@ -180,6 +196,8 @@ const roles = {
             { resource: 'user', action: 'update' },
             { resource: 'analytics', action: 'read' },
             { resource: 'settings', action: 'read' },
+            { resource: 'message', action: 'read' },
+            { resource: 'message', action: 'update' },
         ],
     },
 
@@ -187,6 +205,7 @@ const roles = {
     admin: {
         name: 'admin',
         description: 'System administrator',
+        isSystem: true,
         permissions: [
             // All permissions - admin has everything
             ...defaultPermissions,
@@ -197,6 +216,7 @@ const roles = {
     super_admin: {
         name: 'super_admin',
         description: 'Super administrator with full system control',
+        isSystem: true,
         permissions: [
             // All permissions
             ...defaultPermissions,
@@ -235,10 +255,12 @@ async function main() {
             where: { name: roleData.name },
             update: {
                 description: roleData.description,
+                isSystem: (roleData as any).isSystem ?? false,
             },
             create: {
                 name: roleData.name,
                 description: roleData.description,
+                isSystem: (roleData as any).isSystem ?? false,
             },
         });
 

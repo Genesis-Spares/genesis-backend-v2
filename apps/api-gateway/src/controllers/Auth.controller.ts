@@ -1,5 +1,5 @@
 // apps/api-gateway/src/auth.controller.ts
-import { Body, Controller, HttpException, HttpStatus, Inject, Post } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Inject, Post, Req } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, firstValueFrom } from 'rxjs';
 import {
@@ -10,6 +10,7 @@ import {
     ResendOTPDto,
     ForgotPasswordDto,
     ResetPasswordDto,
+    VerifyInviteDto,
 } from '../dto/Auth.dto';
 
 @Controller('auth')
@@ -19,6 +20,16 @@ export class AuthController {
     @Post('register')
     register(@Body() dto: RegisterDto) {
         return this.forward('auth.register', dto);
+    }
+
+    // Public — the link in the invitation email has no JWT to send.
+    @Post('verify-invite')
+    verifyInvite(@Body() dto: VerifyInviteDto, @Req() req: any) {
+        return this.forward('auth.invite.verify', {
+            token: dto.token,
+            ipAddress: req.ip,
+            userAgent: req.headers?.['user-agent'],
+        });
     }
 
     @Post('verify-email')
@@ -32,8 +43,12 @@ export class AuthController {
     }
 
     @Post('login')
-    login(@Body() dto: LoginDto) {
-        return this.forward('auth.login', dto);
+    login(@Body() dto: LoginDto, @Req() req: any) {
+        return this.forward('auth.login', {
+            ...dto,
+            ipAddress: req.ip,
+            userAgent: req.headers?.['user-agent'],
+        });
     }
 
     @Post('refresh')

@@ -5,6 +5,8 @@ import { PermissionsGuard } from "../common/guards/permissions.guard";
 import { Permissions } from "../common/decorators/permissions.decorator";
 import { CreateProductDto, ProductQueryDto, UpdateInventoryDto, UpdateProductDto } from "apps/product-service/src/dto/product.dto";
 import { catchError, firstValueFrom } from "rxjs";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
+import { type JwtPayload } from "../common/types/jwt-payload.type";
 
 @Controller('products')
 @UseGuards(JwtAuthGuard)
@@ -77,8 +79,8 @@ export class ProductsController {
     @Put(':id')
     @UseGuards(PermissionsGuard)
     @Permissions('catalog:manage')
-    async updateProduct(@Param('id') id: string, @Body() dto: UpdateProductDto) {
-        return this.forward('product.update', { id, dto });
+    async updateProduct(@CurrentUser() user: JwtPayload, @Param('id') id: string, @Body() dto: UpdateProductDto) {
+        return this.forward('product.update', { id, dto, actor: user?.email });
     }
 
     @Delete(':id')
