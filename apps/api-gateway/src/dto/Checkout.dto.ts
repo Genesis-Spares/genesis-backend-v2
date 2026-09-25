@@ -5,6 +5,8 @@ import {
     IsArray,
     IsIn,
     IsInt,
+    IsLatitude,
+    IsLongitude,
     IsNotEmpty,
     IsOptional,
     IsString,
@@ -66,6 +68,15 @@ export class CheckoutDto {
     @IsString()
     @MaxLength(120)
     landmark?: string;
+
+    /** where the shopper pinned the drop-off (GPS or map), for the rider */
+    @IsOptional()
+    @IsLatitude()
+    latitude?: number;
+
+    @IsOptional()
+    @IsLongitude()
+    longitude?: number;
 
     @IsIn(PAYMENT_METHODS)
     paymentMethod: (typeof PAYMENT_METHODS)[number];
