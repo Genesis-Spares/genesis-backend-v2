@@ -144,6 +144,8 @@ services:
       context: ../genesis-frontend-shop
       args:
         NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:11000/api}
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+        NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID: ${GOOGLE_MAPS_MAP_ID:-}
     restart: unless-stopped
     environment:
       # server-side rendering reaches the gateway over the compose network
