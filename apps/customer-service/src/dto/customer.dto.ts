@@ -152,12 +152,13 @@ export class AddressDto {
     state?: string;
 
     @IsString()
-    postalCode: string;
+    @IsOptional()
+    postalCode?: string;
 
     @IsString()
     country: string;
 
-    @IsPhoneNumber()
+    @IsPhoneNumber('KE')
     @IsOptional()
     phone?: string;
 

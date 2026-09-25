@@ -15,6 +15,8 @@ import {
     IsPhoneNumber,
     IsObject,
     IsDateString,
+    IsLatitude,
+    IsLongitude,
     MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -69,6 +71,14 @@ export class OrderAddressDto {
     @IsPhoneNumber()
     @IsOptional()
     phone?: string;
+
+    @IsLatitude()
+    @IsOptional()
+    latitude?: number;
+
+    @IsLongitude()
+    @IsOptional()
+    longitude?: number;
 }
 
 export class OrderItemInputDto {

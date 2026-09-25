@@ -59,6 +59,7 @@ export class MyOrdersController {
                 city: dto.city.trim(),
                 country: 'Kenya',
                 phone,
+                ...(dto.latitude != null && dto.longitude != null ? { latitude: dto.latitude, longitude: dto.longitude } : {}),
             },
             paymentMethod: dto.paymentMethod,
             currency: 'KES',

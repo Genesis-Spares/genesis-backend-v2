@@ -594,6 +594,15 @@ export class CustomerService {
     // ADDRESSES
     // ============================================
 
+    private async assertLabelFree(customerId: string, label: string) {
+        const clash = await this.prisma.address.findFirst({ where: { customerId, label, isActive: true } });
+        if (clash) {
+            throw new RpcException({ statusCode: 409, message: `You already have an address called "${label}"`, error: 'Conflict' });
+        }
+        // a soft-deleted address saved before labels were freed on delete may still hold it
+        await this.prisma.address.deleteMany({ where: { customerId, label, isActive: false } });
+    }
+
     async addAddress(customerId: string, dto: AddressDto) {
         try {
             const customer = await this.prisma.customer.findUnique({
@@ -608,8 +617,13 @@ export class CustomerService {
                 });
             }
 
-            // If this is the first address or set as default, ensure others are not default
-            if (dto.isDefault) {
+            const label = dto.label?.trim() || 'Home';
+            await this.assertLabelFree(customerId, label);
+
+            // the first address is the default; a new default replaces the old one
+            const hasAddresses = await this.prisma.address.count({ where: { customerId, isActive: true } });
+            const isDefault = dto.isDefault === true || hasAddresses === 0;
+            if (isDefault) {
                 await this.prisma.address.updateMany({
                     where: { customerId },
                     data: { isDefault: false },
@@ -619,16 +633,16 @@ export class CustomerService {
             const address = await this.prisma.address.create({
                 data: {
                     customerId,
-                    label: dto.label || 'Home',
+                    label,
                     type: dto.type || 'SHIPPING',
                     line1: dto.line1,
                     line2: dto.line2,
                     city: dto.city,
                     state: dto.state,
-                    postalCode: dto.postalCode,
+                    postalCode: dto.postalCode ?? '',
                     country: dto.country,
                     phone: dto.phone || customer.phone,
-                    isDefault: dto.isDefault ?? false,
+                    isDefault,
                     latitude: dto.latitude,
                     longitude: dto.longitude,
                     deliveryInstructions: dto.deliveryInstructions,
@@ -661,7 +675,7 @@ export class CustomerService {
                     customerId,
                     isActive: true,
                 },
-                orderBy: { isDefault: 'desc' },
+                orderBy: [{ isDefault: 'desc' }, { updatedAt: 'desc' }],
             });
 
             return addresses;
@@ -675,19 +689,23 @@ export class CustomerService {
         }
     }
 
-    async updateAddress(addressId: string, dto: UpdateAddressDto) {
+    /** @param customerId when set (shopper self-service), the address must belong to this customer */
+    async updateAddress(addressId: string, dto: UpdateAddressDto, customerId?: string) {
         try {
             const address = await this.prisma.address.findUnique({
                 where: { id: addressId },
             });
 
-            if (!address) {
+            if (!address || !address.isActive || (customerId && address.customerId !== customerId)) {
                 throw new RpcException({
                     statusCode: 404,
                     message: 'Address not found',
                     error: 'Not Found',
                 });
             }
+
+            const label = dto.label?.trim() || undefined;
+            if (label && label !== address.label) await this.assertLabelFree(address.customerId, label);
 
             if (dto.isDefault) {
                 await this.prisma.address.updateMany({
@@ -699,7 +717,7 @@ export class CustomerService {
             const updated = await this.prisma.address.update({
                 where: { id: addressId },
                 data: {
-                    label: dto.label,
+                    label,
                     type: dto.type,
                     line1: dto.line1,
                     line2: dto.line2,
@@ -708,7 +726,8 @@ export class CustomerService {
                     postalCode: dto.postalCode,
                     country: dto.country,
                     phone: dto.phone,
-                    isDefault: dto.isDefault ?? false,
+                    // leaving isDefault out keeps the current value (it used to clear the default)
+                    isDefault: dto.isDefault,
                     latitude: dto.latitude,
                     longitude: dto.longitude,
                     deliveryInstructions: dto.deliveryInstructions,
@@ -734,13 +753,13 @@ export class CustomerService {
         }
     }
 
-    async deleteAddress(addressId: string) {
+    async deleteAddress(addressId: string, customerId?: string) {
         try {
             const address = await this.prisma.address.findUnique({
                 where: { id: addressId },
             });
 
-            if (!address) {
+            if (!address || !address.isActive || (customerId && address.customerId !== customerId)) {
                 throw new RpcException({
                     statusCode: 404,
                     message: 'Address not found',
@@ -748,11 +767,18 @@ export class CustomerService {
                 });
             }
 
-            // Soft delete
-            const deleted = await this.prisma.address.update({
+            // Soft delete. The label is unique per customer, so free it for a new address.
+            await this.prisma.address.update({
                 where: { id: addressId },
-                data: { isActive: false },
+                data: { isActive: false, isDefault: false, label: `${address.label} (deleted ${address.id.slice(0, 8)})` },
             });
+            if (address.isDefault) {
+                const next = await this.prisma.address.findFirst({
+                    where: { customerId: address.customerId, isActive: true },
+                    orderBy: { updatedAt: 'desc' },
+                });
+                if (next) await this.prisma.address.update({ where: { id: next.id }, data: { isDefault: true } });
+            }
 
             await this.logActivity({
                 customerId: address.customerId,

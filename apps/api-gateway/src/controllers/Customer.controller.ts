@@ -29,7 +29,7 @@ export class CustomerController {
 
     @Get('me')
     async getMyProfile(@Req() req: any) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -38,7 +38,7 @@ export class CustomerController {
 
     @Patch('me')
     async updateMyProfile(@Req() req: any, @Body() dto: UpdateCustomerDto) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -47,7 +47,7 @@ export class CustomerController {
 
     @Get('me/addresses')
     async getMyAddresses(@Req() req: any) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -58,7 +58,7 @@ export class CustomerController {
 
     @Post('me/addresses')
     async addMyAddress(@Req() req: any, @Body() dto: AddressDto) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -72,25 +72,28 @@ export class CustomerController {
         @Param('addressId') addressId: string,
         @Body() dto: UpdateAddressDto,
     ) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
-        return this.forward('customer.address.update', { addressId, dto });
+        // scoped to the caller's own customer record, so one shopper can't edit another's address
+        const customer = await this.forward('customer.find.by.user', { userId });
+        return this.forward('customer.address.update', { addressId, dto, customerId: customer.id });
     }
 
     @Delete('me/addresses/:addressId')
     async deleteMyAddress(@Req() req: any, @Param('addressId') addressId: string) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
-        return this.forward('customer.address.delete', { addressId });
+        const customer = await this.forward('customer.find.by.user', { userId });
+        return this.forward('customer.address.delete', { addressId, customerId: customer.id });
     }
 
     @Get('me/preferences')
     async getMyPreferences(@Req() req: any) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -100,7 +103,7 @@ export class CustomerController {
 
     @Patch('me/preferences')
     async updateMyPreferences(@Req() req: any, @Body() dto: CustomerPreferenceDto) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -115,7 +118,7 @@ export class CustomerController {
         @Query('limit') limit?: number,
         @Query('status') status?: string,
     ) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -130,7 +133,7 @@ export class CustomerController {
 
     @Get('me/order-stats')
     async getMyOrderStats(@Req() req: any) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -140,7 +143,7 @@ export class CustomerController {
 
     @Get('me/wishlist')
     async getMyWishlist(@Req() req: any) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -153,7 +156,7 @@ export class CustomerController {
         @Req() req: any,
         @Body() data: { productId: string; variantId?: string },
     ) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -167,7 +170,7 @@ export class CustomerController {
         @Param('productId') productId: string,
         @Query('variantId') variantId?: string,
     ) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }
@@ -181,7 +184,7 @@ export class CustomerController {
 
     @Get('me/activities')
     async getMyActivities(@Req() req: any, @Query('limit') limit?: number) {
-        const userId = req.user?.id || req.user?.userId;
+        const userId = req.user?.sub ?? req.user?.id ?? req.user?.userId;
         if (!userId) {
             throw new HttpException('User ID not found', HttpStatus.UNAUTHORIZED);
         }

@@ -85,13 +85,13 @@ export class CustomerController {
   }
 
   @MessagePattern('customer.address.update')
-  async updateAddress(@Payload() data: { addressId: string; dto: UpdateAddressDto }) {
-    return this.customerService.updateAddress(data.addressId, data.dto);
+  async updateAddress(@Payload() data: { addressId: string; dto: UpdateAddressDto; customerId?: string }) {
+    return this.customerService.updateAddress(data.addressId, data.dto, data.customerId);
   }
 
   @MessagePattern('customer.address.delete')
-  async deleteAddress(@Payload() data: { addressId: string }) {
-    return this.customerService.deleteAddress(data.addressId);
+  async deleteAddress(@Payload() data: { addressId: string; customerId?: string }) {
+    return this.customerService.deleteAddress(data.addressId, data.customerId);
   }
 
   // ============================================
