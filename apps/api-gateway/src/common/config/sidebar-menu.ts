@@ -63,6 +63,13 @@ export const SIDEBAR_MENU: SidebarMenuSection[] = [
                 permission: 'message:read',
             },
             {
+                id: 'emails',
+                title: 'Emails',
+                icon: 'EnvelopeIcon',
+                path: '/emails',
+                permission: 'message:read',
+            },
+            {
                 id: 'activity',
                 title: 'Activity Log',
                 icon: 'ClipboardDocumentListIcon',

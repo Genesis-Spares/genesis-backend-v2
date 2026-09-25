@@ -4,7 +4,7 @@ import { NotificationService } from './services/notification-service.service';
 import { EmailService } from './services/email.service';
 import { SmsService } from './services/sms.service';
 import { buildOrderMessage, kindFor, type OrderEvent } from './services/order-messages';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload, RpcException } from '@nestjs/microservices';
 
 
 @Controller()
@@ -154,6 +154,20 @@ export class NotificationController {
         } catch (e) {
             this.logger.error(`Support reply email to ${m.email} failed`, e as Error);
             await this.notificationService.logNotification({ userId: m.customerId || m.email, type: 'EMAIL', channel: 'SUPPORT_REPLY', status: 'FAILED', metadata: { ...meta, error: (e as Error).message } }).catch(() => undefined);
+        }
+    }
+
+    /** One personalised copy of a staff-written email; replies with the SMTP message id or an error. */
+    @MessagePattern('email.custom.send')
+    async sendCustomEmail(@Payload() m: {
+        to: string; cc?: string[]; bcc?: string[]; subject: string; html: string; text: string; branded: boolean;
+        attachments?: { filename: string; url: string }[];
+    }) {
+        try {
+            const messageId = await this.emailService.sendCustomEmail(m);
+            return { messageId };
+        } catch (e) {
+            throw new RpcException({ statusCode: 502, message: (e as Error)?.message || 'Mail server error' });
         }
     }
 

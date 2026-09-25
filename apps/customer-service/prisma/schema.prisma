@@ -41,6 +41,7 @@ model Customer {
     // Relationships (within this service only)
     addresses      Address[]
     communications Communication[]
+    emails         EmailRecipient[]
     notes          CustomerNote[]
     activities     CustomerActivity[]
 
@@ -268,4 +269,53 @@ model SupportMessageReply {
 
     @@index([messageId])
     @@map("support_message_replies")
+}
+
+/// An email composed by staff in the dashboard (draft or sent). Each recipient
+/// gets their own copy, personalised with merge fields such as {{firstName}}.
+model EmailMessage {
+    id          String   @id @default(uuid())
+    subject     String   @default("")
+    html        String   @default("") // sanitised rich-text body
+    cc          String[]
+    bcc         String[]
+    attachments Json? // [{ name, url, size, type }] — Cloudinary URLs
+    branded     Boolean  @default(true) // wrap in the Genesis email design
+    marketing   Boolean  @default(false) // skip customers who opted out of marketing emails
+
+    status String @default("DRAFT") // DRAFT, SENDING, SENT, PARTIAL, FAILED
+
+    createdById    String?   @map("created_by_id")
+    createdByEmail String?   @map("created_by_email")
+    sentAt         DateTime? @map("sent_at")
+
+    recipients EmailRecipient[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([status])
+    @@index([updatedAt])
+    @@map("email_messages")
+}
+
+model EmailRecipient {
+    id             String  @id @default(uuid())
+    emailMessageId String  @map("email_message_id")
+    customerId     String? @map("customer_id") // null for an address typed by hand
+    email          String
+    name           String?
+
+    status String    @default("PENDING") // PENDING, SENT, FAILED, SKIPPED
+    error  String?
+    sentAt DateTime? @map("sent_at")
+
+    message  EmailMessage @relation(fields: [emailMessageId], references: [id], onDelete: Cascade)
+    customer Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([emailMessageId])
+    @@index([customerId])
+    @@map("email_recipients")
 }

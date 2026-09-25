@@ -6,6 +6,8 @@ import { CustomerController } from './customer.controller';
 import { CustomerService } from './customer.service';
 import { MessageController } from './message.controller';
 import { MessageService } from './message.service';
+import { EmailController } from './email.controller';
+import { EmailService } from './email.service';
 import { PrismaService } from '../libs/prisma/prisma.service';
 
 @Module({
@@ -29,7 +31,7 @@ import { PrismaService } from '../libs/prisma/prisma.service';
       },
     ]),
   ],
-  controllers: [CustomerController, MessageController],
-  providers: [CustomerService, MessageService, PrismaService],
+  controllers: [CustomerController, MessageController, EmailController],
+  providers: [CustomerService, MessageService, EmailService, PrismaService],
 })
 export class CustomerModule { }

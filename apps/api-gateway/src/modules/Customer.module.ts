@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { CustomerController } from '../controllers/Customer.controller';
 import { MessageController } from '../controllers/Message.controller';
+import { EmailsController } from '../controllers/Emails.controller';
 @Module({
     imports: [
         ClientsModule.registerAsync([
@@ -46,7 +47,7 @@ import { MessageController } from '../controllers/Message.controller';
 
         }),
     ],
-    controllers: [CustomerController, MessageController],
+    controllers: [CustomerController, MessageController, EmailsController],
     // exported so any other feature module in the gateway can guard its routes
     providers: [JwtAuthGuard, PermissionsGuard],
     exports: [JwtModule, JwtAuthGuard, PermissionsGuard],

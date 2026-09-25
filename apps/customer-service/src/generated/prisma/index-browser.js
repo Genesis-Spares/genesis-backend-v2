@@ -267,6 +267,35 @@ exports.Prisma.SupportMessageReplyScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.EmailMessageScalarFieldEnum = {
+  id: 'id',
+  subject: 'subject',
+  html: 'html',
+  cc: 'cc',
+  bcc: 'bcc',
+  attachments: 'attachments',
+  branded: 'branded',
+  marketing: 'marketing',
+  status: 'status',
+  createdById: 'createdById',
+  createdByEmail: 'createdByEmail',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EmailRecipientScalarFieldEnum = {
+  id: 'id',
+  emailMessageId: 'emailMessageId',
+  customerId: 'customerId',
+  email: 'email',
+  name: 'name',
+  status: 'status',
+  error: 'error',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -308,7 +337,9 @@ exports.Prisma.ModelName = {
   CustomerSegment: 'CustomerSegment',
   CustomerSegmentAssignment: 'CustomerSegmentAssignment',
   SupportMessage: 'SupportMessage',
-  SupportMessageReply: 'SupportMessageReply'
+  SupportMessageReply: 'SupportMessageReply',
+  EmailMessage: 'EmailMessage',
+  EmailRecipient: 'EmailRecipient'
 };
 
 /**

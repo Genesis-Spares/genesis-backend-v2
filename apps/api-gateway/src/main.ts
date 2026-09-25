@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ApiGatewayModule } from './api-gateway.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SafeLoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 async function bootstrap() {
-    const app = await NestFactory.create(ApiGatewayModule);
+    const app = await NestFactory.create<NestExpressApplication>(ApiGatewayModule);
+    // rich-text emails to many customers can pass the 100 KB default
+    app.useBodyParser('json', { limit: '2mb' });
 
     app.setGlobalPrefix('api');
     app.useGlobalPipes(new ValidationPipe({

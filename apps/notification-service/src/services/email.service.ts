@@ -157,23 +157,60 @@ export class EmailService {
         await this.sendEmail({ to, subject: msg.subject, html, text: msg.text });
     }
 
+    /**
+     * A staff-written email from the dashboard. Attachments are fetched by URL, so only
+     * hosts listed in EMAIL_ATTACHMENT_HOSTS (default: Cloudinary) are allowed.
+     */
+    async sendCustomEmail(msg: {
+        to: string; cc?: string[]; bcc?: string[]; subject: string; html: string; text: string; branded: boolean;
+        attachments?: { filename: string; url: string }[];
+    }): Promise<string> {
+        const allowed = (this.configService.get<string>('EMAIL_ATTACHMENT_HOSTS') || 'https://res.cloudinary.com/')
+            .split(',').map((h) => h.trim()).filter(Boolean);
+        for (const a of msg.attachments ?? []) {
+            if (!allowed.some((prefix) => a.url.startsWith(prefix))) {
+                throw new Error(`Attachment "${a.filename}" is not from an allowed upload host`);
+            }
+        }
+        const html = await this.templateService.render('custom', {
+            subject: msg.subject, body: msg.html, branded: msg.branded, year: new Date().getFullYear(),
+        });
+        return this.sendEmail({
+            to: msg.to,
+            cc: msg.cc,
+            bcc: msg.bcc,
+            subject: msg.subject,
+            html,
+            text: msg.text,
+            replyTo: this.configService.get<string>('SUPPORT_INBOX_EMAIL') || this.configService.get<string>('SMTP_FROM'),
+            attachments: (msg.attachments ?? []).map((a) => ({ filename: a.filename, path: a.url })),
+        });
+    }
+
     private async sendEmail(options: {
         to: string;
         subject: string;
         html: string;
         text?: string;
         replyTo?: string;
-    }): Promise<void> {
+        cc?: string[];
+        bcc?: string[];
+        attachments?: { filename: string; path: string }[];
+    }): Promise<string> {
         try {
             const info = await this.transporter.sendMail({
                 from: `"Genesis" <${this.configService.get('SMTP_FROM', 'noreply@genesis.com')}>`,
                 to: options.to,
+                cc: options.cc?.length ? options.cc : undefined,
+                bcc: options.bcc?.length ? options.bcc : undefined,
                 subject: options.subject,
                 html: options.html,
                 text: options.text,
                 replyTo: options.replyTo,
+                attachments: options.attachments,
             })
             this.logger.log(`Email sent to ${options.to}: ${info.messageId}`);
+            return String(info.messageId);
         } catch (error) {
             this.logger.error(`Failed to send email to ${options.to}:`, error);
             throw error;
