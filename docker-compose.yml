@@ -145,6 +145,9 @@ services:
       args:
         NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:11000/api}
     restart: unless-stopped
+    environment:
+      # server-side rendering reaches the gateway over the compose network
+      API_INTERNAL_URL: http://api-gateway:11000/api
     ports:
       - "3000:3000"
     depends_on:
