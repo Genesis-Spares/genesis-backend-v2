@@ -136,6 +136,9 @@ exports.Prisma.OrderScalarFieldEnum = {
   shippingAmount: 'shippingAmount',
   discountAmount: 'discountAmount',
   total: 'total',
+  taxRate: 'taxRate',
+  deliveryZoneName: 'deliveryZoneName',
+  paymentDueAt: 'paymentDueAt',
   couponCode: 'couponCode',
   customerNote: 'customerNote',
   shippingAddress: 'shippingAddress',
@@ -224,6 +227,52 @@ exports.Prisma.ReturnItemScalarFieldEnum = {
   unitPrice: 'unitPrice'
 };
 
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  provider: 'provider',
+  status: 'status',
+  amount: 'amount',
+  currency: 'currency',
+  phone: 'phone',
+  merchantRequestId: 'merchantRequestId',
+  checkoutRequestId: 'checkoutRequestId',
+  receiptNumber: 'receiptNumber',
+  resultCode: 'resultCode',
+  resultDesc: 'resultDesc',
+  paidAt: 'paidAt',
+  raw: 'raw',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeliveryZoneScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  cities: 'cities',
+  isDefault: 'isDefault',
+  fee: 'fee',
+  perKgFee: 'perKgFee',
+  includedKg: 'includedKg',
+  freeAbove: 'freeAbove',
+  minDays: 'minDays',
+  maxDays: 'maxDays',
+  allowsCod: 'allowsCod',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CheckoutSettingsScalarFieldEnum = {
+  id: 'id',
+  vatRate: 'vatRate',
+  vatOnShipping: 'vatOnShipping',
+  updatedBy: 'updatedBy',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -261,7 +310,10 @@ exports.Prisma.ModelName = {
   OrderStatusHistory: 'OrderStatusHistory',
   OrderNote: 'OrderNote',
   ReturnRequest: 'ReturnRequest',
-  ReturnItem: 'ReturnItem'
+  ReturnItem: 'ReturnItem',
+  Payment: 'Payment',
+  DeliveryZone: 'DeliveryZone',
+  CheckoutSettings: 'CheckoutSettings'
 };
 
 /**

@@ -13,6 +13,7 @@ export interface OrderEvent {
     subtotal: number;
     shipping: number;
     discount: number;
+    tax?: number;
     total: number;
     items: { name: string; sku: string; quantity: number; unitPrice: number; lineTotal: number }[];
     address?: string | null;
@@ -108,6 +109,7 @@ export function buildOrderMessage(kind: OrderMessageKind, o: OrderEvent) {
             subtotal: money(o.subtotal, o.currency),
             shipping: o.shipping > 0 ? money(o.shipping, o.currency) : 'Free',
             discount: o.discount > 0 ? money(o.discount, o.currency) : null,
+            tax: o.tax && o.tax > 0 ? money(o.tax, o.currency) : null,
             total: money(o.total, o.currency),
             payment: unpaidCod
                 ? 'Pay on delivery (cash or card)'

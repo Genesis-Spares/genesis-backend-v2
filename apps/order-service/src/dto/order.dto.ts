@@ -99,6 +99,12 @@ export class OrderItemInputDto {
     @IsOptional()
     unitCost?: number;
 
+    /** per-unit weight, used to price delivery; not stored on the line */
+    @IsNumber()
+    @Min(0)
+    @IsOptional()
+    weightKg?: number;
+
     @IsInt()
     @Min(1)
     quantity: number;

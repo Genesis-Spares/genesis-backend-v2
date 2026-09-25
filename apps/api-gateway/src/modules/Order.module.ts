@@ -8,6 +8,9 @@ import { OrderController } from '../controllers/Order.controller';
 import { MyOrdersController } from '../controllers/MyOrders.controller';
 import { MyReturnsController, ReturnsController } from '../controllers/Returns.controller';
 import { ReportsController } from '../controllers/Reports.controller';
+import { CheckoutController } from '../controllers/Checkout.controller';
+import { PaymentsController } from '../controllers/Payments.controller';
+import { DeliverySettingsController } from '../controllers/DeliverySettings.controller';
 @Module({
     imports: [
         ClientsModule.registerAsync([
@@ -47,7 +50,7 @@ import { ReportsController } from '../controllers/Reports.controller';
 
         }),
     ],
-    controllers: [OrderController, MyOrdersController, MyReturnsController, ReturnsController, ReportsController],
+    controllers: [OrderController, MyOrdersController, MyReturnsController, ReturnsController, ReportsController, CheckoutController, PaymentsController, DeliverySettingsController],
     // exported so any other feature module in the gateway can guard its routes
     providers: [JwtAuthGuard, PermissionsGuard],
     exports: [JwtModule, JwtAuthGuard, PermissionsGuard],

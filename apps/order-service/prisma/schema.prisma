@@ -31,6 +31,12 @@ model Order {
     discountAmount Decimal @default(0) @map("discount_amount") @db.Decimal(10, 2)
     total          Decimal @db.Decimal(10, 2)
 
+    // VAT % applied to this order, snapshotted so later rate changes don't rewrite history
+    taxRate          Decimal?  @map("tax_rate") @db.Decimal(5, 2)
+    deliveryZoneName String?   @map("delivery_zone_name")
+    // unpaid M-Pesa orders are cancelled (and their stock released) after this
+    paymentDueAt     DateTime? @map("payment_due_at")
+
     couponCode   String? @map("coupon_code")
     customerNote String? @map("customer_note")
 
@@ -51,6 +57,7 @@ model Order {
     statusHistory OrderStatusHistory[]
     notes         OrderNote[]
     returns       ReturnRequest[]
+    payments      Payment[]
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -58,6 +65,7 @@ model Order {
     @@index([customerId])
     @@index([status])
     @@index([paymentStatus])
+    @@index([paymentDueAt])
     @@index([orderNumber])
     @@index([createdAt])
     @@map("orders")
@@ -183,4 +191,72 @@ model ReturnItem {
     @@index([returnId])
     @@index([orderItemId])
     @@map("return_items")
+}
+
+/// One M-Pesa STK push attempt. An order can have several (failed / cancelled
+/// prompts followed by a retry); at most one ends up SUCCESS.
+model Payment {
+    id       String @id @default(uuid())
+    orderId  String @map("order_id")
+    provider String @default("MPESA")
+    status   String @default("PENDING") // PENDING, SUCCESS, FAILED
+
+    amount   Decimal @db.Decimal(10, 2) // whole shillings actually requested from the phone
+    currency String  @default("KES")
+    phone    String // 2547XXXXXXXX
+
+    merchantRequestId String?   @map("merchant_request_id")
+    checkoutRequestId String?   @unique @map("checkout_request_id")
+    receiptNumber     String?   @unique @map("receipt_number")
+    resultCode        Int?      @map("result_code")
+    resultDesc        String?   @map("result_desc")
+    paidAt            DateTime? @map("paid_at")
+    raw               Json? // last callback / status-query payload, for support
+
+    order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([orderId])
+    @@index([status])
+    @@map("payments")
+}
+
+/// Delivery pricing. A shopper's town picks the zone; towns no zone lists
+/// fall back to the zone marked isDefault.
+model DeliveryZone {
+    id          String   @id @default(uuid())
+    name        String
+    description String?
+    cities      String[] // lower-case town names
+    isDefault   Boolean  @default(false) @map("is_default")
+
+    fee        Decimal  @db.Decimal(10, 2)
+    perKgFee   Decimal  @default(0) @map("per_kg_fee") @db.Decimal(10, 2) // charged per started kg above includedKg
+    includedKg Decimal  @default(0) @map("included_kg") @db.Decimal(10, 2)
+    freeAbove  Decimal? @map("free_above") @db.Decimal(10, 2) // goods subtotal that makes delivery free
+
+    minDays   Int     @default(1) @map("min_days")
+    maxDays   Int     @default(3) @map("max_days")
+    allowsCod Boolean @default(false) @map("allows_cod")
+    isActive  Boolean @default(true) @map("is_active")
+    sortOrder Int     @default(0) @map("sort_order")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("delivery_zones")
+}
+
+/// Single-row store-wide checkout settings (id is always 1).
+model CheckoutSettings {
+    id            Int     @id @default(1)
+    vatRate       Decimal @default(16) @map("vat_rate") @db.Decimal(5, 2) // %, added on top of prices
+    vatOnShipping Boolean @default(true) @map("vat_on_shipping")
+
+    updatedBy String?  @map("updated_by")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("checkout_settings")
 }

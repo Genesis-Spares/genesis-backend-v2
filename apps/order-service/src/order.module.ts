@@ -7,6 +7,9 @@ import { OrderService } from './order.service';
 import { ReturnService } from './return.service';
 import { ReportService } from './report.service';
 import { PrismaService } from '../libs/prisma/prisma.service';
+import { PricingService } from './pricing.service';
+import { PaymentService } from './payment.service';
+import { MpesaClient } from './mpesa.client';
 
 @Module({
   imports: [
@@ -42,6 +45,6 @@ import { PrismaService } from '../libs/prisma/prisma.service';
     ]),
   ],
   controllers: [OrderController],
-  providers: [OrderService, ReturnService, ReportService, PrismaService],
+  providers: [OrderService, ReturnService, ReportService, PrismaService, PricingService, PaymentService, MpesaClient],
 })
 export class OrderModule { }

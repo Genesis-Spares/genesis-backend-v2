@@ -4,6 +4,10 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { OrderService } from './order.service';
 import { ReturnService, type CreateReturnInput } from './return.service';
 import { ReportService } from './report.service';
+import { PricingService } from './pricing.service';
+import { PaymentService } from './payment.service';
+import type { StkCallbackBody } from './mpesa.client';
+import { DeliveryZoneDto, QuoteRequestDto, UpdateCheckoutSettingsDto } from './dto/pricing.dto';
 import {
     CreateOrderDto,
     UpdateOrderDto,
@@ -23,7 +27,66 @@ export class OrderController {
         private readonly orderService: OrderService,
         private readonly returns: ReturnService,
         private readonly reports: ReportService,
+        private readonly pricing: PricingService,
+        private readonly payments: PaymentService,
     ) { }
+
+    // ── delivery zones, VAT & quotes ──────────────────────
+    @MessagePattern('pricing.quote')
+    quote(@Payload() dto: QuoteRequestDto) {
+        return this.pricing.quote(dto);
+    }
+
+    @MessagePattern('pricing.zones.public')
+    publicZones() {
+        return this.pricing.publicZones();
+    }
+
+    @MessagePattern('pricing.zones.list')
+    listZones() {
+        return this.pricing.listZones();
+    }
+
+    @MessagePattern('pricing.zones.create')
+    createZone(@Payload() dto: DeliveryZoneDto) {
+        return this.pricing.createZone(dto);
+    }
+
+    @MessagePattern('pricing.zones.update')
+    updateZone(@Payload() d: { id: string; dto: DeliveryZoneDto }) {
+        return this.pricing.updateZone(d.id, d.dto);
+    }
+
+    @MessagePattern('pricing.zones.delete')
+    deleteZone(@Payload() d: { id: string }) {
+        return this.pricing.deleteZone(d.id);
+    }
+
+    @MessagePattern('pricing.settings.get')
+    getSettings() {
+        return this.pricing.getSettings();
+    }
+
+    @MessagePattern('pricing.settings.update')
+    updateSettings(@Payload() dto: UpdateCheckoutSettingsDto) {
+        return this.pricing.updateSettings(dto);
+    }
+
+    // ── M-Pesa ────────────────────────────────────────────
+    @MessagePattern('payment.mpesa.start')
+    startMpesa(@Payload() d: { orderId: string; customerId?: string; phone?: string }) {
+        return this.payments.startMpesa(d.orderId, { customerId: d.customerId, phone: d.phone });
+    }
+
+    @MessagePattern('payment.mpesa.callback')
+    mpesaCallback(@Payload() d: { secret: string; body: StkCallbackBody }) {
+        return this.payments.handleCallback(d.secret, d.body);
+    }
+
+    @MessagePattern('payment.status')
+    paymentStatus(@Payload() d: { orderId: string; customerId?: string }) {
+        return this.payments.status(d.orderId, d.customerId);
+    }
 
     // ── reports (read-only) ───────────────────────────────
     @MessagePattern('report.sales')
@@ -50,9 +113,13 @@ export class OrderController {
         return this.orderService.createOrder(dto);
     }
 
+    /** Shopper checkout; M-Pesa orders also get their first STK prompt here. */
     @MessagePattern('order.place')
     async placeOrder(@Payload() dto: CreateOrderDto) {
-        return this.orderService.placeOrder(dto);
+        const order = await this.orderService.placeOrder(dto);
+        if (order.paymentMethod !== 'mpesa') return { ...order, payment: null };
+        const { payment } = await this.payments.startMpesa(order.id);
+        return { ...order, payment };
     }
 
     @MessagePattern('order.purchase.check')
