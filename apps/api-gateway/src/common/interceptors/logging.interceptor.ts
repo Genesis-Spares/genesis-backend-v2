@@ -1,183 +1,132 @@
-// apps/api-gateway/src/interceptors/safe-logging.interceptor.ts
 import {
-    Injectable,
-    NestInterceptor,
-    ExecutionContext,
-    CallHandler,
-    Logger,
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
+// Any key whose name contains one of these (case-insensitive) is never logged:
+// tokens, passwords, OTPs, M-Pesa credentials, cookies, auth headers...
+const SENSITIVE_KEY =
+  /pass(word|key)?|token|secret|otp|authorization|cookie|api[-_]?key|credential|pin$|cvv|card/i;
+const REDACTED = '***REDACTED***';
+const MAX_DEPTH = 5;
+const MAX_ARRAY_ITEMS = 3;
+
+/**
+ * Logs one line per request and response. Request/response bodies are only logged
+ * when LOG_BODIES=true (off by default in production), and even then every
+ * sensitive field is redacted at any depth, so tokens and passwords never reach the logs.
+ */
 @Injectable()
 export class SafeLoggingInterceptor implements NestInterceptor {
-    private readonly logger = new Logger('API-Gateway');
+  private readonly logger = new Logger('API-Gateway');
+  private readonly logBodies =
+    (process.env.LOG_BODIES ??
+      (process.env.NODE_ENV === 'production' ? 'false' : 'true')) === 'true';
 
-    intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        const ctx = context.switchToHttp();
-        const request = ctx.getRequest();
-        const { method, url, ip, body, headers } = request;
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    if (context.getType() !== 'http') return next.handle();
 
-        this.logger.log(`📥 ${method} ${url} from ${ip}`);
+    const request = context.switchToHttp().getRequest();
+    const method: string = request.method;
+    const url = SafeLoggingInterceptor.redactUrl(
+      request.originalUrl ?? request.url ?? '',
+    );
+    const ip = request.ip;
+    const startTime = Date.now();
 
-        // ✅ Log request body safely (without sensitive data)
-        if (body && Object.keys(body).length > 0) {
-            try {
-                const safeBody = this.sanitizeSensitiveData(body);
-                this.logger.debug(`   Request: ${JSON.stringify(safeBody)}`);
-            } catch {
-                this.logger.debug('   Request: [Unable to stringify]');
-            }
-        }
-
-        const startTime = Date.now();
-
-        return next.handle().pipe(
-            tap((data) => {
-                const duration = Date.now() - startTime;
-                this.logger.log(`📤 ${method} ${url} - ${duration}ms`);
-
-                // ✅ Log response data safely
-                if (data) {
-                    const safeData = this.getSafeLogData(data);
-                    this.logger.debug(`   Response: ${JSON.stringify(safeData)}`);
-                }
-            }),
-            catchError((error) => {
-                const duration = Date.now() - startTime;
-                this.logger.error(`❌ ${method} ${url} - ${duration}ms`);
-                this.logger.error(`   Error: ${error.message}`);
-                if (error.stack) {
-                    this.logger.error(`   Stack: ${error.stack.substring(0, 300)}...`);
-                }
-                throw error;
-            }),
-        );
+    this.logger.log(`📥 ${method} ${url} from ${ip}`);
+    if (
+      this.logBodies &&
+      request.body &&
+      Object.keys(request.body).length > 0
+    ) {
+      this.logger.debug(`   Request: ${this.stringify(request.body)}`);
     }
 
-    private sanitizeSensitiveData(data: any): any {
-        if (!data || typeof data !== 'object') return data;
-
-        const sensitiveFields = ['password', 'refreshToken', 'accessToken', 'token', 'secret'];
-        const sanitized = { ...data };
-
-        for (const field of sensitiveFields) {
-            if (sanitized[field]) {
-                sanitized[field] = '***REDACTED***';
-            }
+    return next.handle().pipe(
+      tap((data) => {
+        this.logger.log(`📤 ${method} ${url} - ${Date.now() - startTime}ms`);
+        if (this.logBodies && data !== undefined) {
+          this.logger.debug(`   Response: ${this.stringify(data)}`);
         }
+      }),
+      catchError((error) => {
+        const status = error?.status ?? error?.statusCode;
+        const line = `❌ ${method} ${url} - ${Date.now() - startTime}ms${status ? ` (${status})` : ''}: ${error?.message}`;
+        // client errors (bad input, auth failures) are routine; only server errors get a stack
+        if (status && status < 500) {
+          this.logger.warn(line);
+        } else {
+          this.logger.error(line, error?.stack?.substring(0, 500));
+        }
+        throw error;
+      }),
+    );
+  }
 
-        return sanitized;
+  /** Strip secrets from the path (M-Pesa callback secret) and from query parameters. */
+  static redactUrl(url: string): string {
+    const [path, query] = url.split('?', 2);
+    const safePath = path.replace(
+      /(\/mpesa\/callback\/)[^/]+/i,
+      `$1${REDACTED}`,
+    );
+    if (!query) return safePath;
+    const safeQuery = query
+      .split('&')
+      .map((pair) => {
+        const [key] = pair.split('=', 1);
+        return SENSITIVE_KEY.test(decodeURIComponent(key || '')) ||
+          /^(code|sig|signature)$/i.test(key)
+          ? `${key}=${REDACTED}`
+          : pair;
+      })
+      .join('&');
+    return `${safePath}?${safeQuery}`;
+  }
+
+  /** Deep copy with every sensitive key redacted; large arrays and deep nesting are summarised. */
+  static redact(value: any, depth = 0): any {
+    if (value === null || typeof value !== 'object') {
+      return typeof value === 'string' &&
+        /^eyJ[\w-]+\.[\w-]+\.[\w-]+$/.test(value)
+        ? REDACTED
+        : value; // bare JWTs
+    }
+    if (depth >= MAX_DEPTH)
+      return Array.isArray(value) ? `[Array:${value.length}]` : '[Object]';
+    if (value instanceof Date) return value.toISOString();
+    if (Buffer.isBuffer(value)) return `[Buffer:${value.length}]`;
+
+    if (Array.isArray(value)) {
+      const items = value
+        .slice(0, MAX_ARRAY_ITEMS)
+        .map((v) => SafeLoggingInterceptor.redact(v, depth + 1));
+      if (value.length > MAX_ARRAY_ITEMS)
+        items.push(`…${value.length - MAX_ARRAY_ITEMS} more`);
+      return items;
     }
 
-    private getSafeLogData(data: any): any {
-        if (!data) return {};
-
-        // If data is not an object, return it directly
-        if (typeof data !== 'object') {
-            return { value: data };
-        }
-
-        const safe: any = {};
-
-        // ✅ Try to extract common response patterns
-        try {
-            // Pattern 1: Response with data wrapper
-            if (data.data !== undefined) {
-                safe.data = this.extractSafeFields(data.data);
-            }
-
-            // Pattern 2: Direct response with fields
-            const directFields = this.extractSafeFields(data);
-            Object.assign(safe, directFields);
-
-            // Pattern 3: Include status/message if present
-            if (data.statusCode !== undefined) {
-                safe.statusCode = data.statusCode;
-            }
-            if (data.status !== undefined) {
-                safe.status = data.status;
-            }
-            if (data.message !== undefined) {
-                safe.message = data.message;
-            }
-            if (data.success !== undefined) {
-                safe.success = data.success;
-            }
-
-            // If nothing was extracted, log basic info
-            if (Object.keys(safe).length === 0) {
-                const keys = Object.keys(data);
-                if (keys.length > 0) {
-                    safe._summary = `Response with ${keys.length} fields: ${keys.join(', ')}`;
-                    // Include first 3 fields safely
-                    for (let i = 0; i < Math.min(3, keys.length); i++) {
-                        const key = keys[i];
-                        const value = data[key];
-                        safe[key] = typeof value === 'object'
-                            ? `[${Array.isArray(value) ? 'Array' : 'Object'}]`
-                            : value;
-                    }
-                } else {
-                    safe._note = 'Empty response';
-                }
-            }
-        } catch (error) {
-            safe._error = 'Unable to extract data';
-            safe._message = error.message;
-        }
-
-        return safe;
+    const out: Record<string, any> = {};
+    for (const [key, v] of Object.entries(value)) {
+      out[key] = SENSITIVE_KEY.test(key)
+        ? REDACTED
+        : SafeLoggingInterceptor.redact(v, depth + 1);
     }
+    return out;
+  }
 
-    private extractSafeFields(data: any): any {
-        if (!data || typeof data !== 'object') {
-            return data !== undefined ? { value: data } : {};
-        }
-
-        // Handle arrays
-        if (Array.isArray(data)) {
-            return {
-                arrayLength: data.length,
-                firstItem: data.length > 0 ? this.extractSafeFields(data[0]) : null
-            };
-        }
-
-        const safe: any = {};
-
-        // Common safe fields to extract
-        const safeFields = [
-            'id', 'userId', 'user_id', 'uuid',
-            'name', 'firstName', 'lastName', 'fullName',
-            'email', 'username',
-            'role', 'roles', 'roleId',
-            'message', 'msg', 'description',
-            'status', 'statusCode', 'code',
-            'success', 'error',
-            'createdAt', 'updatedAt', 'timestamp',
-            'count', 'total', 'page', 'limit',
-            'token', 'accessToken', 'refreshToken',
-            'expiresIn', 'expiresAt'
-        ];
-
-        for (const field of safeFields) {
-            if (data[field] !== undefined && data[field] !== null) {
-                const value = data[field];
-                safe[field] = typeof value === 'object'
-                    ? (Array.isArray(value) ? `[Array:${value.length}]` : '[Object]')
-                    : value;
-            }
-        }
-
-        // If no safe fields found, include count of fields
-        if (Object.keys(safe).length === 0) {
-            const keys = Object.keys(data);
-            if (keys.length > 0) {
-                safe._fields = keys.slice(0, 5).join(', ') + (keys.length > 5 ? '...' : '');
-                safe._totalFields = keys.length;
-            }
-        }
-
-        return safe;
+  private stringify(value: any): string {
+    try {
+      const text = JSON.stringify(SafeLoggingInterceptor.redact(value));
+      return text && text.length > 2000 ? `${text.slice(0, 2000)}…` : text;
+    } catch {
+      return '[unserialisable]';
     }
+  }
 }
