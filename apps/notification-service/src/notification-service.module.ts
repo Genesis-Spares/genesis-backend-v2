@@ -7,6 +7,9 @@ import { PrismaService } from '../libs/prisma/prisma.service';
 import { EmailService } from './services/email.service';
 import { SmsService } from './services/sms.service';
 import { EmailTemplateService } from './templates/email-template.service';
+import { StaffNotificationsController } from './staff/staff-notifications.controller';
+import { StaffNotificationsService } from './staff/staff-notifications.service';
+import { PushService } from './staff/push.service';
 
 @Module({
     imports: [
@@ -30,8 +33,8 @@ import { EmailTemplateService } from './templates/email-template.service';
             },
         ]),
     ],
-    controllers: [NotificationController],
-    providers: [NotificationService, EmailService, SmsService, PrismaService, EmailTemplateService],
+    controllers: [NotificationController, StaffNotificationsController],
+    providers: [NotificationService, EmailService, SmsService, PrismaService, EmailTemplateService, StaffNotificationsService, PushService],
     exports: [NotificationService]
 })
 export class NotificationModule { }

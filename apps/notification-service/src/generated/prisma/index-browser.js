@@ -142,9 +142,56 @@ exports.Prisma.NotificationPreferenceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.StaffNotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  body: 'body',
+  link: 'link',
+  permission: 'permission',
+  data: 'data',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StaffNotificationReadScalarFieldEnum = {
+  notificationId: 'notificationId',
+  userId: 'userId',
+  readAt: 'readAt'
+};
+
+exports.Prisma.StaffNotificationCursorScalarFieldEnum = {
+  userId: 'userId',
+  readBefore: 'readBefore'
+};
+
+exports.Prisma.PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  permissions: 'permissions',
+  userAgent: 'userAgent',
+  failureCount: 'failureCount',
+  lastSuccessAt: 'lastSuccessAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AppSettingScalarFieldEnum = {
+  key: 'key',
+  value: 'value',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -157,10 +204,21 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
 
 exports.Prisma.ModelName = {
   Notification: 'Notification',
-  NotificationPreference: 'NotificationPreference'
+  NotificationPreference: 'NotificationPreference',
+  StaffNotification: 'StaffNotification',
+  StaffNotificationRead: 'StaffNotificationRead',
+  StaffNotificationCursor: 'StaffNotificationCursor',
+  PushSubscription: 'PushSubscription',
+  AppSetting: 'AppSetting'
 };
 
 /**

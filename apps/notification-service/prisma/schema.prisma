@@ -36,3 +36,70 @@ model NotificationPreference {
 
     @@map("notification_preferences")
 }
+
+// ── Dashboard notifications for staff (bell + push) ──────────────────────────
+// Shared feed: one row per event, shown to every staff member whose permissions
+// include `permission` (null = everyone). Read state is per user.
+
+model StaffNotification {
+    id         String   @id @default(uuid())
+    type       String // ORDER_PLACED, ORDER_CANCELLED, RETURN_REQUESTED, MESSAGE_RECEIVED, LOW_STOCK, TEST
+    title      String
+    body       String
+    link       String? // dashboard path, e.g. /orders/<id>
+    permission String? // required to see it, e.g. order:read
+    data       Json?
+    createdAt  DateTime @default(now()) @map("created_at")
+
+    reads StaffNotificationRead[]
+
+    @@index([createdAt])
+    @@map("staff_notifications")
+}
+
+model StaffNotificationRead {
+    notificationId String            @map("notification_id")
+    userId         String            @map("user_id")
+    readAt         DateTime          @default(now()) @map("read_at")
+    notification   StaffNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+    @@id([notificationId, userId])
+    @@index([userId])
+    @@map("staff_notification_reads")
+}
+
+/// "Mark all as read": everything created before `readBefore` counts as read for this user.
+model StaffNotificationCursor {
+    userId     String   @id @map("user_id")
+    readBefore DateTime @map("read_before")
+
+    @@map("staff_notification_cursors")
+}
+
+/// A browser/device that asked for push notifications (Web Push).
+model PushSubscription {
+    id            String    @id @default(uuid())
+    userId        String    @map("user_id")
+    endpoint      String    @unique
+    p256dh        String
+    auth          String
+    /// the user's permissions when they last opened the app, used to filter what's pushed
+    permissions   String[]
+    userAgent     String?   @map("user_agent")
+    failureCount  Int       @default(0) @map("failure_count")
+    lastSuccessAt DateTime? @map("last_success_at")
+    createdAt     DateTime  @default(now()) @map("created_at")
+    updatedAt     DateTime  @updatedAt @map("updated_at")
+
+    @@index([userId])
+    @@map("push_subscriptions")
+}
+
+/// Small key/value store; holds the generated VAPID key pair when none is set in the env.
+model AppSetting {
+    key       String   @id
+    value     String
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("app_settings")
+}
